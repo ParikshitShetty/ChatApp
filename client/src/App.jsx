@@ -1,14 +1,19 @@
 import { useState } from 'react'
 import Home from './components/Home'
+import { Route, Routes } from 'react-router-dom'
+import Login from './components/Login'
+import SignUp from './components/SignUp'
+SignUp
 
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
     <>
-      <div className='bg-gray-950 min-h-screen text-white'>
-      <Home></Home>
-      </div>
+      <Routes>
+        <Route path='/' element={<Home></Home>}/>
+        <Route path='/login' element={<Login/>}/>
+        <Route path='/register' element={<SignUp/>}/>
+      </Routes>
     </>
   )
 }

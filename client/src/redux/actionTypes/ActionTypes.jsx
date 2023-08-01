@@ -1,0 +1,2 @@
+export const MESSAGE_ADDER = "MESSAGE_ADDER";
+export const MESSAGE_ERASER = "MESSAGE_ERASER";
