@@ -2,7 +2,7 @@ const express = require('express')
 const app = express()
 const port = 4000
 const cors = require('cors')
-//app.use(cors())
+app.use(cors())
 
 const clients = new Map();
 const WebSocket = require('ws');
@@ -39,10 +39,8 @@ wss.on("connection", ws => {
     });
     // handling client connection error
     ws.onerror = function () {
-        console.log("Some Error occurred")
-        
+        console.log("Some Error occurred");
     }
-    
 });
 
 
@@ -80,3 +78,7 @@ const sendToClient = (clientId,data) =>{
     res.json(`data sent to ${clientId}!`)
     console.log('clients',clients.keys())
   }) 
+
+  app.post('/signup/', (req,res) =>{
+    res.json('yo')
+  })

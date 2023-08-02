@@ -1,8 +1,8 @@
 import React, { useEffect,useState,useRef } from 'react'
 import useWebSocket from "react-use-websocket" 
-import NavBar from '../utils/NavBar'
-import SideBar from '../utils/SideBar'
-import Chat from './Chat'
+import NavBar from '../components/NavBar'
+import SideBar from '../components/SideBar'
+import Chat from '../components/Chat'
 import Message from '../utils/Message'
 import { useDispatch, useSelector } from 'react-redux'
 

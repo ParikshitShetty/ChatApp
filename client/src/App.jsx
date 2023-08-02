@@ -1,9 +1,9 @@
-import { useState } from 'react'
-import Home from './components/Home'
+import React from 'react'
 import { Route, Routes } from 'react-router-dom'
-import Login from './components/Login'
-import SignUp from './components/SignUp'
-SignUp
+import Home from './Routes/Home'
+import Login from './Routes/Login'
+import SignUp from './Routes/SignUp'
+
 
 function App() {
 
