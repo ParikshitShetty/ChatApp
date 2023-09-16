@@ -10,13 +10,16 @@ const Chat = ({socketRef,wsResp,arr}) => {
             left</div>
           <div className='flex flex-col basis-1/2 justify-end'>
             {arr.map((elem,index)=>(
-              <div key={index} className='flex justify-end bg-neutral-700 mb-2 p-2  rounded'>{elem}</div>
-            ))}</div>    
+              <div key={index} className='flex justify-end bg-neutral-700 mb-2 p-3 mr-2 rounded-2xl'>
+                {elem}
+                </div>
+            ))}
+          </div>    
         </div>
         <div className='flex h-16'>
-              <Message socketRef={socketRef}></Message>
+            <Message socketRef={socketRef}></Message>
         </div>   
-    </div>
+      </div>
     </>
   )
 }

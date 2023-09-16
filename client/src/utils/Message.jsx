@@ -7,23 +7,25 @@ const Message = ({socketRef}) => {
 
     const messageRedData = useSelector((state)=> state.MessageReducer);
 
-    const message = messageRedData.message
+    const message = messageRedData.message;
 
-    const [clientId, setClientId] = useState(1)
+    const [clientId, setClientId] = useState(0);
 
     const dispatch = useDispatch();
 
     const handleMessageChange = (event) =>{
-        dispatch(messageAdder(event.target.value))
+        dispatch(messageAdder(event.target.value));
     }
+    console.log(parseInt(Math.random()));
 
     const sendMessage = () =>{
         console.log(messageRedData)
+        // clientId = Math.random()
         if (socketRef.current.readyState === WebSocket.OPEN) {
             const data = JSON.stringify({ clientId, message });
             if (message.length > 0) {
             socketRef.current.send(data);
-            dispatch(messageDeleter(''))
+            dispatch(messageDeleter(''));
             }
           } else {
             console.log('WebSocket connection is not open.');

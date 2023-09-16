@@ -2,7 +2,15 @@ const express = require('express')
 const app = express()
 const port = 4000
 const cors = require('cors')
-app.use(cors())
+
+app.use(express.json());
+app.use(cors());
+
+const registerRoute = require('./public/routes/register');
+const loginRoute = require('./public/routes/login');
+
+app.use('/signup',registerRoute);
+app.use('/login',loginRoute);
 
 const clients = new Map();
 const WebSocket = require('ws');
@@ -78,7 +86,3 @@ const sendToClient = (clientId,data) =>{
     res.json(`data sent to ${clientId}!`)
     console.log('clients',clients.keys())
   }) 
-
-  app.post('/signup/', (req,res) =>{
-    res.json('yo')
-  })

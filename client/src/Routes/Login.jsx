@@ -14,10 +14,30 @@ const Login = () => {
 
     const [remember,setRemember] = useState(false);
 
+    const [message, setMessage] = useState('');
+
     const navigate = useNavigate();
 
-    const formSubmit = (event) =>{
+    const formSubmit = async(event) =>{
         event.preventDefault();
+        try {
+            const response = await fetch('http://localhost:4000/login/',{
+                method : 'POST',
+                headers : {
+                    'Content-Type': 'application/json',
+                },
+                body : JSON.stringify(loginDetails),
+            });
+            if (response.ok) {
+                const responseData = await response.json();
+                setMessage(responseData.message)
+            }else{
+                setMessage('Error submitting data.');
+            }
+        } catch (error) {
+            setMessage('An error occurred.');
+        }
+        console.log(message);
         if (loginDetails.username.length > 0 && isValid) {
             navigate('/');
         }
@@ -43,7 +63,7 @@ const Login = () => {
     useEffect(() => {
       setIsValid(validatePassword(loginDetails.password))
     }, [loginDetails.password])
-    
+    console.log(isValid)
 
   return (
     <>
