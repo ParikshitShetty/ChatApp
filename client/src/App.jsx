@@ -1,20 +1,35 @@
-import { useEffect, useRef, useState } from 'react'
-import { Route, Routes } from 'react-router-dom'
+import { ErrorBoundary } from "react-error-boundary";
+import { useAtomValue } from "jotai";
 // Routes
 import Chat from './routes/Chat';
+// Utils
+import FallbackComponent from './utils/FallbackComponent';
+// Global States
+import { 
+  loginStateStore } from "./store/store";
+import LoginForm from "./components/LoginForm";
+
 
 function App() {
-  const [count, setCount] = useState(0);
-
-
+  const loginState = useAtomValue(loginStateStore);
   return (
     <>
-      <div className='min-h-screen w-screen bg-gray-900 text-white text-center'>
-        <Routes>
-          <Route path='/' element={<>yo /</>}/>
-          <Route path='/chat' element={<Chat />}/>
-        </Routes>
-      </div>
+      <ErrorBoundary 
+        FallbackComponent={FallbackComponent}
+        >
+          <div className='min-h-screen w-screen bg-gray-900 text-white text-center relative'>
+            {
+              !loginState ?
+                <>
+                  <LoginForm />
+                </>
+                :
+                <>
+                  <Chat />
+                </>
+            }
+          </div>
+      </ErrorBoundary>
     </>
   )
 }

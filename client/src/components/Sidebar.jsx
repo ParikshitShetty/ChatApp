@@ -4,14 +4,16 @@ import { useAtom, useAtomValue } from 'jotai';
 import { 
     connectedUsersListStore, 
     recieverStore, 
-    senderStore} from '../store/store';
+    senderIdStore} from '../store/store';
 
 function Sidebar() {
     const connectedUsersList = useAtomValue(connectedUsersListStore);
-    const sender = useAtomValue(senderStore);
+    const sender = useAtomValue(senderIdStore);
 
     const [reciever,setReciever] = useAtom(recieverStore);
-    console.log("reciever",reciever)
+    console.log("recieverId",reciever);
+
+    console.log("connectedUsersList",connectedUsersList);
   return (
     <>
         <div className='h-[80vh] w-2/5 flex flex-col justify-start items-start'>
@@ -25,17 +27,17 @@ function Sidebar() {
                <div className="flow-root">
                     <ul role="list" className="divide-y divide-gray-200 dark:divide-gray-700">
                     {
-                    [...connectedUsersList].filter(user => user !== sender).
+                    [...connectedUsersList].filter(user => user.chatID !== sender).
                     map((users,index)=>(            
                     <li key={index} onClick={() => setReciever(users)}
-                    className={`py-3 sm:py-4 ${reciever === users ? `bg-gray-200` : `dark:text-white`} cursor-pointer text-gray-900 rounded-xl`}>
+                    className={`py-3 sm:py-4 ${reciever.chatID === users.chatID ? `bg-gray-200` : `dark:text-white`} cursor-pointer text-gray-900 rounded-xl`}>
                             <div className="flex items-center">
                                 {/* <div className="flex-shrink-0">
                                     <img className="w-8 h-8 rounded-full" src="/docs/images/people/profile-picture-1.jpg" alt="Neil image"/>
                                 </div> */}
                                 <div className="flex-1 min-w-0 ms-4">
                                     <p className="text-sm font-mediu truncate ">
-                                        {users}
+                                        {users.userName}
                                     </p>
                                     {/* <p className="text-sm text-gray-500 truncate dark:text-gray-400">
                                         email@windster.com

@@ -1,37 +1,52 @@
 import React, { useEffect, useRef } from 'react'
-import { useSetAtom } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 // Components
 import ChatForm from '../components/ChatFrom'
 import Sidebar from '../components/Sidebar';
 import Navbar from '../components/Navbar';
 import ChatRenderer from '../components/ChatRenderer';
-// Utils
-import socket from '../utils/socket'
 // Global states
 import { 
   connectedUsersListStore,
-  senderStore
+  recieverStore,
+  senderIdStore,
+  userNameStore
 } from '../store/store';
+// Utils
+import { initializeSocket } from '../utils/socket'
 
 function Chat() {
     const ref = useRef(true);
 
+    const userName = useAtomValue(userNameStore);
+
     const setConnectedUsersList = useSetAtom(connectedUsersListStore);
-    const setSender = useSetAtom(senderStore);
+    const setSenderId = useSetAtom(senderIdStore);
+
+    const reciever = useAtomValue(recieverStore);
     
     useEffect(()=>{
-      if (socket && ref.current) {
-        socket.emit('message',{ username:"y7o", room:"1" });
+      const socket = initializeSocket(userName);
 
-        socket.on('users_list',(data)=>{
-          setSender(data.currentUser)
-          setConnectedUsersList(data.usersList)
-        })
+      // TO get all the users connected to the network
+      socket.on('users_list',(data)=>{
+        console.log("users_list",data);
+        setConnectedUsersList(data.usersList)
+      })
 
-        ref.current = false;
+      // To the user of a tab
+      socket.on('current_user',(data)=>{
+        console.log("data",data)
+        setSenderId(data.chatID);
+      })
+
+      ref.current = false;
+      return ()=>{
+        socket.off('users_list')
+        socket.off('current_user')
       }
     },[]);
-
+    console.log("userName",userName)
   return (
     <>
       <div className='h-full w-full flex flex-col justify-between items-center'>
@@ -39,8 +54,18 @@ function Chat() {
         <div className='h-full w-full flex justify-between items-center'>
           <Sidebar />
           <div className='h-full w-full flex flex-col justify-end items-end'>
-            <ChatRenderer />
-            <ChatForm/>
+            {reciever.chatID ?
+              <>
+                <ChatRenderer />
+                <ChatForm />
+              </>
+              :
+              <>
+                <div className='h-full w-full flex flex-col justify-end items-center font-semibold'>
+                  Select Users to Chat
+                </div>
+              </>
+            }
           </div>
         </div>
       </div>

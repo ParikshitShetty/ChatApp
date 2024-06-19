@@ -8,6 +8,9 @@ const { createServer } = require('node:http');
 // Import singleton
 const singleton = require('./socketIoSingleton');
 
+// redisClient connection
+const redisClient = require('./redisClient');
+
 const port = 3000;
 const server = createServer(app);
 
@@ -29,50 +32,65 @@ const ioInstance = new Server(server, {
 
 let usersList = [];
 
-ioInstance.on('connection', socket => {
+ioInstance.on('connection', async(socket) => {
     const chatID = socket.id;
+    const userName = socket.handshake.query.userName;
 
     console.log(`A user connected with id ${chatID}`);
     // Add the user to the array
-    usersList.push(chatID);
+    const userObj = {
+      chatID : chatID,
+      userName : userName
+    }
+
+    console.log("username",userName);
+
+    usersList.push(userObj);
+
+    const res = await redisClient.xAdd('Users', '*', userObj);
+    console.log("res",res)
     
     socket.join(chatID);
 
-    socket.emit('users_list',{ currentUser:chatID, usersList:usersList })
+    // Send the current users userId
+    socket.emit('current_user',userObj)
+    // Sending userslist to all the users connected
+    ioInstance.emit('users_list',{ usersList:usersList })
 
     socket.on('disconnect', () => {
       socket.leave(chatID);
       console.log("Disconnected: ",chatID);
 
-      const index = usersList.indexOf(chatID)
+      const index = usersList.indexOf(chatID);
       // Remove the user from current user list
       usersList.splice(index,1)
+
+      // Broadcast the updated users list to all clients
+      ioInstance.emit('users_list', { usersList: usersList });
     })
 
-    socket.on('send_message', message => {
+    socket.on('send_message', async( message ) => {
       console.log("message",message)
 
-      receiverChatID = message.receiverChatID
-      senderChatID = message.senderChatID
-      content = message.content
+      const messageObj = {
+        receiverChatID : message.receiverChatID,
+        senderChatID : message.senderChatID,
+        content : message.content
+      }
 
-      // Send message to only that particular room
-      socket.in(receiverChatID).emit('receive_message', {
-          'content': content,
-          'senderChatID': senderChatID,
-          'receiverChatID':receiverChatID,
-      })
+      // Send message to only that particular room/user
+      socket.in(messageObj.receiverChatID).emit('receive_message',messageObj)
+      const result = await redisClient.xAdd('Messages', '*', messageObj);
     })
 
-    // socket.on('message',(message)=>{
-    //   console.log("message",message);
-    // });
 });
 
-app.get('/', (req, res) => {
-  res.send('<h1>Hello world</h1>');
+app.get('/', async(req, res) => {
+  const result = await redisClient.xRange('Messages', '-', '+');
+  console.log("result",result)
+res.json({message:"userList",data:result});
 });
 
-server.listen(port, () => {
+server.listen(port,'0.0.0.0', () => {
   console.log('server running at http://localhost:3000');
 });

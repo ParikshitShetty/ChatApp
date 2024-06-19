@@ -1,27 +1,44 @@
 import React, { useEffect, useState } from 'react'
 import { IoPaperPlane } from "react-icons/io5";
-import { useAtomValue } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 // Utils
-import socket from '../utils/socket'
+import { initializeSocket } from '../utils/socket'
 // Global States 
 import { 
+  chatArrayStore,
   recieverStore,
-  senderStore } from '../store/store';
+  senderIdStore, 
+  userNameStore} from '../store/store';
 
 function ChatForm() {
   const [message,setMessage] = useState('');
 
-  const sender = useAtomValue(senderStore);
+  const sender = useAtomValue(senderIdStore);
 
   const reciever = useAtomValue(recieverStore);
 
+  const userName = useAtomValue(userNameStore);
+
+  const setChatArray = useSetAtom(chatArrayStore);
+
+  // Input change handler
   const changeHandler = (event) => setMessage(event.target.value);
 
   const formSubmit = (event) =>{
     event.preventDefault();
     if (!message) return ;
     try {
-      socket.emit('send_message',{ receiverChatID:reciever, senderChatID:sender , content:message});
+      const socket = initializeSocket(userName);
+
+      const messgeObj = { 
+        receiverChatID:reciever.chatID, 
+        senderChatID:sender, 
+        content:message
+      }
+      socket.emit('send_message',messgeObj);
+      setChatArray((prev)=>{
+        return [...prev,messgeObj]
+    });
 
       setMessage('');
     } catch (error) {

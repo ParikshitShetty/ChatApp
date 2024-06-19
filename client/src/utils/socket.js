@@ -1,8 +1,14 @@
-// src/socket.js
 import { io } from 'socket.io-client';
 
-const SOCKET_URL = 'http://localhost:3000';
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL;
 
-const socket = io(SOCKET_URL);
+let socket;
 
-export default socket;
+export const initializeSocket = (userName) => {
+    if (!socket) {
+        socket = io(SOCKET_URL, {
+            query: { userName }
+        });
+    }
+    return socket;
+};
