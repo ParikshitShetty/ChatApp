@@ -30,10 +30,13 @@ function ChatForm() {
     try {
       const socket = initializeSocket(userName);
 
+      console.log("sender",sender)
+
       const messgeObj = { 
         receiverChatID:reciever.chatID, 
         senderChatID:sender, 
-        content:message
+        content:message,
+        recieverUserName:reciever.userName
       }
       socket.emit('send_message',messgeObj);
       setChatArray((prev)=>{

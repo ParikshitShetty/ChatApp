@@ -22,7 +22,7 @@ function ChatRenderer() {
             const socket = initializeSocket(userName);
 
             socket.on('receive_message',(data)=>{
-                console.log("data",data)
+                // console.log("data",data)
                 setChatArray((prev)=>{
                     return [...prev,data]
                 })
@@ -30,13 +30,13 @@ function ChatRenderer() {
             ref.current = false;
         }
       },[])
-
-      console.log("chatArray",chatArray)
+    console.log("reciever",reciever)
+    // console.log("chatArray",chatArray)
   return (
     <>
         <div className=' w-full h-[75vh] flex flex-col justify-start items-center '>
            {chatArray?.map((message)=>(
-                <span className={`w-full h-auto text-gray-950 ${reciever.chatID ===  message.receiverChatID ? `message-orange` : `message-blue`}`}>{message.content}</span>
+                <span className={`w-full h-auto text-gray-950 ${reciever.userName ===  message.recieverUserName ? `message-orange` : `message-blue`}`}>{message.content}</span>
            ))}
         </div>
     </>

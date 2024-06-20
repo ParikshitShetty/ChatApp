@@ -30,13 +30,13 @@ function Chat() {
 
       // TO get all the users connected to the network
       socket.on('users_list',(data)=>{
-        console.log("users_list",data);
+        // console.log("users_list",data);
         setConnectedUsersList(data.usersList)
       })
 
       // To the user of a tab
       socket.on('current_user',(data)=>{
-        console.log("data",data)
+        // console.log("data",data)
         setSenderId(data.chatID);
       })
 
