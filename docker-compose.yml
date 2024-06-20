@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  redis-server:
+    image: redis
+    volumes:
+      - C:/redis-db-data:/data
+      # - C:/Users/parik/projects/chatApp/dump.rdb:/data/dump.rdb
+  
+  chat_server:
+    container_name: chat_server
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - redis-server
+    restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  chat_client:
+    container_name: chat_client
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    depends_on:
+      - chat_server
+    restart: always
+
+volumes:
+  c-drive:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: C:/
