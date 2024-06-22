@@ -8,12 +8,14 @@ import ChatRenderer from '../components/ChatRenderer';
 // Global states
 import { 
   connectedUsersListStore,
+  GroupChatModeState,
   recieverStore,
   senderIdStore,
   userNameStore
 } from '../store/store';
 // Utils
 import { initializeSocket } from '../utils/socket'
+import GroupChatRenderer from '../components/GroupChatRenderer';
 
 function Chat() {
     const ref = useRef(true);
@@ -24,6 +26,8 @@ function Chat() {
     const setSenderId = useSetAtom(senderIdStore);
 
     const reciever = useAtomValue(recieverStore);
+
+    const groupChatMode = useAtomValue(GroupChatModeState);
     
     useEffect(()=>{
       const socket = initializeSocket(userName);
@@ -54,7 +58,12 @@ function Chat() {
         <div className='h-full w-full flex justify-between items-center'>
           <Sidebar />
           <div className='h-full w-full flex flex-col justify-end items-end'>
-            {reciever.chatID ?
+            {groupChatMode ?
+              <>
+                <GroupChatRenderer />
+              </>
+              :
+              reciever.chatID ?
               <>
                 <ChatRenderer />
                 <ChatForm />

@@ -1,12 +1,15 @@
 const express = require('express');
 const app = express()
 const cors = require('cors')
-const bodyParser = require('body-parser')
+const bodyParser = require('body-parser');
+// Config env file
+require('dotenv').config();
 
+// Create node server
 const { createServer } = require('node:http');
 
-// Import singleton
-const singleton = require('./socketIoSingleton');
+// Import SocketIo server
+const { Server } = require("socket.io");
 
 // redisClient connection
 const redisClient = require('./redisClient');
@@ -16,8 +19,13 @@ const { usersGetter } = require('./common/usersGetter');
 
 // Import Controllers
 const { readMessages } = require('./controller/messageReaderController');
+const { readGroupMessages } = require('./controller/groupMessageReaderController');
 
-const port = 3000;
+// Import SocketIo Handlers
+const disconnectHandler = require('./socketIoHandlers/disconnectHandler');
+const personalMessageHanlder = require('./socketIoHandlers/personalMessageHandler');
+
+const port = process.env.SERVER_PORT;
 const server = createServer(app);
 
 app.use(cors({
@@ -35,15 +43,24 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // Create an instance of the socketio
-// const ioInstance = singleton(server);
-
-const { Server } = require("socket.io");
 const ioInstance = new Server(server, {
   cors: {
       origin: '*',
       methods: ['GET', 'POST'],
   }
 });
+
+let users = [];
+const addUser = (param) => {
+  const { id, name, room } = param;
+  console.log("id, name, room",id, name, room);
+  if (!name || !room) return { error: "name and room required." };
+  const user = { id, name, room };
+
+  users.push(user);
+
+  return { user };
+};
 
 ioInstance.on('connection', async(socket) => {
   try {
@@ -73,45 +90,49 @@ ioInstance.on('connection', async(socket) => {
       // Sending userslist to all the users connected
       ioInstance.emit('users_list',{ usersList:parsedObjects })
 
+      // Actions on disconnecting
       socket.on('disconnect', async() => {
-        socket.leave(chatID);
-        console.log("Disconnected: ",chatID);
+        const dis = await disconnectHandler(socket,ioInstance,chatID,userObj,userName);
+        console.log("dis",dis);
+      });
 
-        // Convert json string to objects and convert it back to string since redis only stores strings
-        userObj = JSON.parse(userObj);
-        userObj.status = 'offline';
-        userObj = JSON.stringify(userObj);
-
-        // Update the status in redis
-        await redisClient.hSet('Users', userName, userObj);
-
-        const objectsOnDisconnect = await usersGetter();
-        // Broadcast the updated users list to all clients
-        ioInstance.emit('users_list', { usersList: objectsOnDisconnect });
-      })
-
+      // Individual Messaging
       socket.on('send_message', async( message ) => {
         // console.log("message",message)
+        const messageSender = await personalMessageHanlder(socket,message,userName);
+        console.log("messageSender messge id",messageSender);
+      });
+
+      // Group Messaging
+      socket.on('group_message', async( message ) => {
+        console.log("message",message);
 
         const messageObj = {
-          receiverChatID : message.receiverChatID,
-          senderChatID : message.senderChatID,
-          content : message.content
-        }
+          id : socket.id,
+          room : message.room,
+          sender : message.sender,
+          // content : message.content
+        };
+        const obj = { id: socket.id, name:message.sender, room:message.room };
+        // console.log("Object",{obj})
 
-        // Send message to only that particular room/user
-        socket.in(messageObj.receiverChatID).emit('receive_message',messageObj)
+        // console.log("messageObj",messageObj);
+        const { user, error } = addUser(obj);
 
-        const redisMsgObj = {
-          senderUserName : userName,
-          recieverUserName : message.recieverUserName,
-          content : message.content
-        }
-        // console.log("redisMsgObj",redisMsgObj)
+        if (error) return console.log(error);
 
-        // Add the message in redis cache
-        await redisClient.xAdd('Messages', '*', redisMsgObj);
-      })
+        socket.join(user.room);
+
+        // console.log("user",user);
+        
+        socket.emit("receive_group_message", {
+          user: message.sender,
+          content: `Welocome to ${user.room}`,
+        });
+        // socket.broadcast.in(user.room)
+        socket.broadcast.in(messageObj.room)
+        .emit("receive_group_message", { user: message.sender, content: `${user.name} has joined!` });
+      });
 
   } catch (error) {
     console.error("Error while using websockets: ",error);
@@ -132,4 +153,5 @@ server.listen(port,'0.0.0.0', () => {
 
   // Define API routes here
   app.post('/api/read_messages',readMessages);
+  app.post('/api/read_group_messages',readGroupMessages);
 });

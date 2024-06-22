@@ -10,7 +10,7 @@ function Navbar() {
 
     const reciever = useAtomValue(recieverStore);
 
-    console.log("reciever",reciever)
+    // console.log("reciever",reciever)
 
   return (
     <>
@@ -23,7 +23,7 @@ function Navbar() {
                 
                   <div className=' flex justify-center items-center'>
                     { reciever.userName &&
-                      <span className="text-white font-semibold rounded-lg text-xl px-4 py-1 text-center  ">
+                      <span className="text-white font-semibold rounded-lg text-xl px-4 py-1 text-center first-letter:uppercase">
                         {reciever.userName}
                       </span>
                     }
@@ -36,7 +36,7 @@ function Navbar() {
                 
               <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
                 <div
-                  className="text-white bg-blue-700 font-medium rounded-lg text-sm px-8 py-2 text-center dark:bg-blue-600 "
+                  className="text-white bg-blue-700 font-medium rounded-lg text-sm px-8 py-2 text-center dark:bg-blue-600 first-letter:uppercase"
                 >
                   {userName}
                 </div>

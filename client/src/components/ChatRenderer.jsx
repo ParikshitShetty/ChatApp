@@ -5,6 +5,7 @@ import { initializeSocket } from '../utils/socket'
 // Global States
 import { 
     chatArrayStore, 
+    GroupChatModeState, 
     recieverStore,
     userNameStore} from '../store/store';
 
@@ -14,6 +15,8 @@ function ChatRenderer() {
     const reciever = useAtomValue(recieverStore);
 
     const userName = useAtomValue(userNameStore);
+
+    const groupChatMode = useAtomValue(GroupChatModeState);
 
     const ref = useRef(true);
 
@@ -34,7 +37,7 @@ function ChatRenderer() {
     // console.log("chatArray",chatArray)
   return (
     <>
-        <div className=' w-full h-[75vh] flex flex-col justify-start items-center '>
+        <div className=' w-full h-[75vh] flex flex-col justify-start items-center'>
            {chatArray?.map((message)=>(
                 <span className={`w-full h-auto text-gray-950 ${reciever.userName ===  message.recieverUserName ? `message-orange` : `message-blue`}`}>{message.content}</span>
            ))}
