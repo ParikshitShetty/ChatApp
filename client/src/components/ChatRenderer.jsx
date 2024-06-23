@@ -16,8 +16,6 @@ function ChatRenderer() {
 
     const userName = useAtomValue(userNameStore);
 
-    const groupChatMode = useAtomValue(GroupChatModeState);
-
     const ref = useRef(true);
 
     useEffect(()=>{
@@ -37,9 +35,9 @@ function ChatRenderer() {
     // console.log("chatArray",chatArray)
   return (
     <>
-        <div className=' w-full h-[75vh] flex flex-col justify-start items-center'>
-           {chatArray?.map((message)=>(
-                <span className={`w-full h-auto text-gray-950 ${reciever.userName ===  message.recieverUserName ? `message-orange` : `message-blue`}`}>{message.content}</span>
+        <div className=' w-full h-[80vh] max-h-[80vh] overflow-y-scroll flex flex-col justify-start items-center'>
+           {chatArray?.map((message,index)=>(
+                <span key={index} className={`w-full h-auto text-gray-950 ${reciever.userName ===  message.recieverUserName ? `message-orange` : `message-blue`}`}>{message.content}</span>
            ))}
         </div>
     </>

@@ -104,34 +104,32 @@ ioInstance.on('connection', async(socket) => {
       });
 
       // Group Messaging
-      socket.on('group_message', async( message ) => {
-        console.log("message",message);
+      socket.on('join_group', async( message ) => {
+        // console.log("message",message);
+    
+        const room = message.room;
+        const sender = message.sender;
 
-        const messageObj = {
-          id : socket.id,
-          room : message.room,
-          sender : message.sender,
-          // content : message.content
-        };
-        const obj = { id: socket.id, name:message.sender, room:message.room };
-        // console.log("Object",{obj})
+        socket.join(room);
 
-        // console.log("messageObj",messageObj);
-        const { user, error } = addUser(obj);
+        const returnObj  = {
+          sender : sender,
+          message_others : `${sender} has joined!`,
+          message_self : `Welocome to ${room}`
+        }
 
-        if (error) return console.log(error);
+        // Send message to all connected in the room
+        ioInstance.in(room).emit("receive_welcome_message", returnObj);
+      
+        socket.on('send_group_message',async( group_message_obj ) => {
+          console.log("group_message_obj",group_message_obj);
 
-        socket.join(user.room);
-
-        // console.log("user",user);
-        
-        socket.emit("receive_group_message", {
-          user: message.sender,
-          content: `Welocome to ${user.room}`,
+          socket.emit("receive_group_message", group_message_obj);
+          // Broadcast to whoever is in the channel
+          socket.broadcast.to(group_message_obj.room).emit("receive_group_message", group_message_obj);
+  
+          redisClient.xAdd('GroupMessages','*',group_message_obj);
         });
-        // socket.broadcast.in(user.room)
-        socket.broadcast.in(messageObj.room)
-        .emit("receive_group_message", { user: message.sender, content: `${user.name} has joined!` });
       });
 
   } catch (error) {
@@ -141,11 +139,11 @@ ioInstance.on('connection', async(socket) => {
 });
 
 app.get('/', async(req, res) => {
-  const result = await redisClient.xRange('Messages', '-', '+');
+  const result = await redisClient.xRange('GroupMessages', '-', '+');
   const existingUser = await redisClient.hGetAll('Users');
 
   console.log("result",result)
-  res.json({ MessagesList:result ,userList:existingUser});
+  res.json({ GroupMessages:result ,userList:existingUser});
 });
 
 server.listen(port,'0.0.0.0', () => {

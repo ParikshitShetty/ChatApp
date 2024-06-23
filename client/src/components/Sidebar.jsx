@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 // Global States
 import { 
     chatArrayStore,
     connectedUsersListStore, 
+    groupchatArrayStore, 
     GroupChatModeState, 
     GroupDataState, 
     GroupState, 
@@ -28,6 +29,8 @@ function Sidebar() {
     const groupDataArray = useAtomValue(GroupDataState);
 
     const [group,setGroup] = useAtom(GroupState);
+
+    const setGroupChatArray =  useSetAtom(groupchatArrayStore);
     
     // console.log("recieverId",reciever);
 
@@ -74,38 +77,16 @@ function Sidebar() {
     const getOldGroupMessages = async(groupData) =>{
         if(!groupChatMode) setGroupChatMode(true);
 
-        console.log("groupData",groupData);
+        // console.log("groupData",groupData);
 
         setReciever({});
         setGroup(groupData);
 
-        // { chatID: "ml4p5LmK2OUJ-AzNAAAB", userName: "striker", status: "online" }
-
-        // console.log("users",users)
-        // setReciever(users);
-        // setChatArray([]);
-
-        const socket = initializeSocket(userName);
-        // const name = ;
-        // const room = ;
-
-        const obj = {
-            id : socket.id,
-            room : 'Group',
-            sender : userName,
-            // content : message.content
-        }
-
-        socket.emit("group_message", obj, (error) => {
-            if (error) alert(error);
-        });
-        return
-        setReciever(users);
-        setChatArray([]);
+        setGroupChatArray([]);
         
-        const Obj = { "reciever":users.userName, "sender":userName }
+        const Obj = {  }
         try {
-            const url = import.meta.env.VITE_READ_MESSAGES;
+            const url = import.meta.env.VITE_READ_GROUP_MESSAGES;
             const options = {
                 method: "POST", // *GET, POST, PUT, DELETE, etc.
                 mode: "cors", // no-cors, *cors, same-origin
@@ -121,8 +102,8 @@ function Sidebar() {
             const response = await fetch(url,options);
             const responseJson = await response.json();
 
-            console.log("responseJson",responseJson);
-            setChatArray(responseJson.filteredMessages);
+            console.log("responseJson",responseJson.messages);
+            setGroupChatArray(responseJson.messages);
         } catch (error) {
             console.error("Error while getting older messages : ",error)
         }
@@ -134,11 +115,19 @@ function Sidebar() {
             setReciever(user)
         }
 
-        const socket = initializeSocket(userName);
-        socket.on("receive_group_message", (message) => {
-            console.log("receive_group_message",message);
-        });
     },[connectedUsersList])
+
+    useEffect(() => {
+        const socket = initializeSocket(userName);
+        if (groupChatMode) {
+            const messageObj = {
+                room : group.groupName,
+                sender : userName,
+            }
+            socket.emit('join_group', messageObj);
+        }
+    }, [groupChatMode])
+    
   return (
     <>
         <div className='h-[90vh] w-4/12 flex flex-col justify-start items-start '>
@@ -171,13 +160,14 @@ function Sidebar() {
                </div>
                <div className="flow-root">
                     <ul role="list" className="divide-y divide-gray-200 dark:divide-gray-700">
-                        {groupDataArray.map((groupData)=>(
-                            <li onClick={() => getOldGroupMessages(groupData)}
+                        {groupDataArray.map((groupData,index)=>(
+                            <li key={index} onClick={() => getOldGroupMessages(groupData)}
                             className={`py-3 sm:py-4 ${groupData.groupName === group.groupName ? `bg-gray-200 text-black` : `text-white `} cursor-pointer rounded-xl`}>
                                 <div className="flex items-center">
                                     <div className="flex-1 min-w-0 ms-4">
                                         <p className="text-sm font-medium truncate first-letter:uppercase">
-                                            { groupData.groupName }  
+                                            {/* { groupData.groupName }   */}
+                                            Join Group Chat
                                         </p>
                                     </div>
                                 </div>

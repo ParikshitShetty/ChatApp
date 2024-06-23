@@ -12,7 +12,8 @@
     padding: 10px;
     background-color: #5dbdf9;
     width: 200px;
-    min-height: 50px;
+    height: auto;
+    max-height: 100%;
     word-wrap: break-word;
     text-align: left;
     font: 400 .9em 'Open Sans', sans-serif;
@@ -51,7 +52,8 @@
     padding: 10px;
     background-color: #deca65;
     width: 200px;
-    min-height: 50px;
+    height: auto;
+    max-height: 100%;
     word-wrap: break-word;
     text-align: left;
     font: 400 .9em 'Open Sans', sans-serif;

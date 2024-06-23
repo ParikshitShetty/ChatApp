@@ -50,7 +50,7 @@ function Chat() {
         socket.off('current_user')
       }
     },[]);
-    console.log("userName",userName)
+    // console.log("userName",userName)
   return (
     <>
       <div className='h-full w-full flex flex-col justify-between items-center'>
@@ -61,6 +61,7 @@ function Chat() {
             {groupChatMode ?
               <>
                 <GroupChatRenderer />
+                <ChatForm />
               </>
               :
               reciever.chatID ?

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useAtom, useSetAtom } from 'jotai';
 // Global States
 import { 
@@ -9,6 +9,8 @@ function LoginForm() {
   const [userName,setUserName] = useAtom(userNameStore);
 
   const loginState = useSetAtom(loginStateStore);
+
+  const inputRef = useRef(null);
 
   const InputHandler = (event) =>{
     const { value } = event.target;
@@ -24,6 +26,12 @@ function LoginForm() {
         loginState(false);
       }
   };
+
+  useEffect(()=>{
+    if (inputRef) {
+      inputRef.current.focus()
+    }
+  },[])
 
   console.log("userName",userName)
 
@@ -41,6 +49,7 @@ function LoginForm() {
                     <input type="user_name" id="user_name" name='user_name'
                         className="bg-transparent border-2 border-gray-300 text-gray-50 text-sm rounded-lg block w-full p-2.5 " 
                         placeholder="user name" required 
+                        ref={inputRef} 
                         value={userName} onChange={InputHandler}/>
                   </div>
                   <button type="submit" className="relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800">

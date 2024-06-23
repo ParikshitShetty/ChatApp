@@ -6,6 +6,7 @@ export const senderIdStore = atom('');
 export const recieverStore = atom({});
 
 export const chatArrayStore = atom([]);
+export const groupchatArrayStore = atom([]);
 
 export const userNameStore = atom('');
 

@@ -1,5 +1,6 @@
 import { ErrorBoundary } from "react-error-boundary";
 import { useAtomValue } from "jotai";
+import { Toaster } from 'react-hot-toast';
 // Routes
 import Chat from './routes/Chat';
 // Utils
@@ -28,6 +29,7 @@ function App() {
                   <Chat />
                 </>
             }
+            <Toaster position="top-right"/>
           </div>
       </ErrorBoundary>
     </>
