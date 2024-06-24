@@ -103,6 +103,7 @@ ioInstance.on('connection', async(socket) => {
         console.log("messageSender messge id",messageSender);
       });
 
+      let senderGlobal = null;
       // Group Messaging
       socket.on('join_group', async( message ) => {
         // console.log("message",message);
@@ -119,7 +120,10 @@ ioInstance.on('connection', async(socket) => {
         }
 
         // Send message to all connected in the room
-        ioInstance.in(room).emit("receive_welcome_message", returnObj);
+        if (senderGlobal === null){
+          ioInstance.in(room).emit("receive_welcome_message", returnObj);
+          senderGlobal = sender;
+        }
       
         socket.on('send_group_message',async( group_message_obj ) => {
           console.log("group_message_obj",group_message_obj);

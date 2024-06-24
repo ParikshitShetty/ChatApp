@@ -166,8 +166,8 @@ function Sidebar() {
                                 <div className="flex items-center">
                                     <div className="flex-1 min-w-0 ms-4">
                                         <p className="text-sm font-medium truncate first-letter:uppercase">
-                                            {/* { groupData.groupName }   */}
-                                            Join Group Chat
+                                            Join { groupData.groupName } Group 
+                                            {/* Join Group Chat */}
                                         </p>
                                     </div>
                                 </div>

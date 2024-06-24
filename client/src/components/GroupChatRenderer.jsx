@@ -27,9 +27,9 @@ function GroupChatRenderer() {
     const messagesEndRef = useRef(null);
 
     useEffect(()=>{
-      if (ref.current) {
-        const socket = initializeSocket(userName);
+      const socket = initializeSocket(userName);
 
+      if (ref.current) {
         socket.on('receive_welcome_message',(message)=>{
           console.log("receive_welcome_message",message);
           if (userName === message.sender) {
@@ -49,6 +49,12 @@ function GroupChatRenderer() {
         });
         ref.current = false;
       }
+      return () => {
+        if (ref.current) {
+          socket.removeListener("receive_welcome_message");
+          socket.removeListener("receive_group_message");
+        }
+      }
     },[]);
 
     useEffect(() =>{
@@ -59,10 +65,10 @@ function GroupChatRenderer() {
     console.log("chatArray",chatArray);
   return (
     <>
-        <div className=' w-full max-h-[80vh] h-[80vh] overflow-y-scroll flex flex-col justify-start items-center' ref={messagesEndRef}>
+        <div className='w-[90%] max-h-[80vh] h-[80vh] overflow-y-scroll flex flex-col justify-start items-start' ref={messagesEndRef}>
            {chatArray?.map((message,index)=>(
               <>
-                <span key={index} className={`text-gray-950 ${userName ===  message.message.sender ? `message-orange` : `message-blue`}`}>
+                <span key={index} className={`text-gray-950 ${userName ===  message.message.sender ? `message-orange` : `message-blue`} ${index === 0 ? `mt-2` : `` }`}>
                   <p className={`font-semibold mb-2 first-letter:uppercase`}>{userName === message.message.sender ? `You` : message.message.sender}</p>{message.message.content}</span>
               </>
            ))}

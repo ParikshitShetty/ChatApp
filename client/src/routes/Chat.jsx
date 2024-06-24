@@ -46,8 +46,8 @@ function Chat() {
 
       ref.current = false;
       return ()=>{
-        socket.off('users_list')
-        socket.off('current_user')
+        socket.removeListener('users_list');
+        socket.removeListener('current_user');
       }
     },[]);
     // console.log("userName",userName)
@@ -57,7 +57,7 @@ function Chat() {
         <Navbar />
         <div className='h-full w-full flex justify-between items-center'>
           <Sidebar />
-          <div className='h-full w-full flex flex-col justify-end items-end'>
+          <main className='h-full w-full flex flex-col justify-end items-end'>
             {groupChatMode ?
               <>
                 <GroupChatRenderer />
@@ -76,7 +76,7 @@ function Chat() {
                 </div>
               </>
             }
-          </div>
+          </main>
         </div>
       </div>
     </>
