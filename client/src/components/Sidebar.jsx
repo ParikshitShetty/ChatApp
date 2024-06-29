@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 // Global States
 import { 
@@ -31,6 +31,8 @@ function Sidebar() {
     const [group,setGroup] = useAtom(GroupState);
 
     const setGroupChatArray =  useSetAtom(groupchatArrayStore);
+
+    const [toogle,setToggle] = useState(false);
     
     // console.log("recieverId",reciever);
 
@@ -38,8 +40,21 @@ function Sidebar() {
 
     // console.log("sender",sender)
 
+    const groupViewChange = () =>{
+        if (toogle) return
+        setToggle(true);
+    }
+
+    const individualViewChange = () =>{
+        if (!toogle) return
+        setToggle(false);
+    }
+
     const getOldMessages = async(users) =>{
         // console.log("users",users)
+        // Return if you are clicking on the same user twice
+        if (reciever?.userName === users.userName) return;
+
         setGroup({
             groupName: null, 
             no_of_people_active: null 
@@ -78,6 +93,8 @@ function Sidebar() {
         if(!groupChatMode) setGroupChatMode(true);
 
         // console.log("groupData",groupData);
+
+        if (group?.groupName === groupData.groupName) return;
 
         setReciever({});
         setGroup(groupData);
@@ -130,51 +147,76 @@ function Sidebar() {
     
   return (
     <>
-        <div className='h-[90vh] w-4/12 flex flex-col justify-start items-start '>
-            <div className="w-full max-w-md p-4 bg-white border border-gray-200 rounded-b-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700 ">
-                <div className="flex items-center justify-between mb-4">
-                    <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">All Users</h5>
-               </div>
-               <div className="flow-root">
-                    <ul role="list" className="divide-y divide-gray-200 dark:divide-gray-700">
-                    {
-                    [...connectedUsersList].filter(user => user.chatID !== sender).
-                    map((users,index)=>(            
-                    <li key={index} onClick={() => getOldMessages(users)}
-                    className={`py-3 sm:py-4 ${reciever.chatID === users.chatID ? `bg-gray-200` : `dark:text-white`} cursor-pointer text-gray-900 rounded-xl`}>
-                            <div className="flex items-center">
-                                <div className="flex-1 min-w-0 ms-4">
-                                    <p className="text-sm font-medium truncate first-letter:uppercase">
-                                        {users.userName}
-                                    </p>
-                                </div>
-                            </div>
-                        </li>
-                        ))
-                    }
-                    </ul>
-               </div>
-               {/* Group wise renderers */}
-               <div className="flex items-center justify-between my-4">
-                    <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">Groups</h5>
-               </div>
-               <div className="flow-root">
-                    <ul role="list" className="divide-y divide-gray-200 dark:divide-gray-700">
-                        {groupDataArray.map((groupData,index)=>(
-                            <li key={index} onClick={() => getOldGroupMessages(groupData)}
-                            className={`py-3 sm:py-4 ${groupData.groupName === group.groupName ? `bg-gray-200 text-black` : `text-white `} cursor-pointer rounded-xl`}>
-                                <div className="flex items-center">
-                                    <div className="flex-1 min-w-0 ms-4">
-                                        <p className="text-sm font-medium truncate first-letter:uppercase">
-                                            Join { groupData.groupName } Group 
-                                            {/* Join Group Chat */}
-                                        </p>
-                                    </div>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
-               </div>
+        <div className='h-[100vh] w-[27%] flex flex-col justify-start items-start border-r border-gray-700 '>
+            <div className="w-full max-w-md h-full max-h-full p-4 bg-white rounded-r-lg shadow shadow- sm:p-8 dark:bg-custom-pitch-dark dark:border-gray-200 ">
+
+                <div className='w-full h-20 flex justify-evenly items-center'>
+                    <div onClick={individualViewChange}
+                    className={`w-1/3 ${toogle ? `bg-black text-white` :`bg-gray-300 text-black`} font-semibold h-2/3 inline-flex items-center justify-center mx-2 rounded-2xl cursor-pointer transition-all duration-500 ease-in-out`}>
+                        Users
+                    </div>
+                    <div onClick={groupViewChange}
+                    className={`w-1/3 ${toogle ? `bg-gray-300 text-black` :`bg-black text-white`} font-semibold h-2/3 inline-flex items-center justify-center mx-2 rounded-2xl cursor-pointer transition-all duration-500 ease-in-out`}>
+                        Groups
+                    </div>
+                </div>
+                {
+                    !toogle 
+                    ?
+                        <>
+                           <div className="flow-root">
+                                {/* <ul role="list" className="divide-y divide-gray-200 dark:divide-gray-700"> */}
+                                <ul role="list" className="">
+                                {
+                                [...connectedUsersList].filter(user => user.chatID !== sender).
+                                map((users,index)=>(            
+                                    <li key={index} onClick={() => getOldMessages(users)}
+                                    className={`h-12 my-2 cursor-pointer text-gray-900 rounded-xl`}>
+                                        <div className="flex items-center justify-start h-full">
+                                            <div className="w-12 h-full rounded-3xl bg-gray-200 ml-2 py-1">
+                                                <span className='h-full w-full my-1'>
+                                                </span>
+                                                {/* <img src="" alt="" /> */}
+                                            </div>
+                                            <div className={`flex-1 min-w-0 h-full ms-4 rounded-xl inline-flex justify-center items-center transition-all duration-500 ease-in-out ${reciever.chatID === users.chatID ? `bg-gray-200 ` : `dark:text-white `}`}>
+                                                <p className="text-md font-medium truncate first-letter:uppercase ">
+                                                    {users.userName}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    ))
+                                }
+                                </ul>
+                           </div>
+                        </>
+                    :
+                        <>
+                           {/* Group wise renderers */}
+                           <div className="flow-root">
+                                <ul role="list" className="">
+                                    {groupDataArray.map((groupData,index)=>(
+                                        <li key={index} onClick={() => getOldGroupMessages(groupData)}
+                                        className={`h-12 my-2 cursor-pointer text-gray-900 rounded-xl`}>
+                                            <div className="flex items-center justify-start h-full">
+                                                <div className="w-12 h-full rounded-3xl bg-gray-200 ml-2 py-1">
+                                                    <span className='h-full w-full my-1'>
+                                                    </span>
+                                                    {/* <img src="" alt="" /> */}
+                                                </div>
+                                                <div className={`flex-1 min-w-0 h-full ms-4 rounded-xl inline-flex justify-center items-center transition-all duration-500 ease-in-out ${groupData.groupName === group.groupName ? `bg-gray-200 text-black` : `dark:text-white `}`}>
+                                                    <p className="text-sm font-medium truncate first-letter:uppercase">
+                                                        Join { groupData.groupName } Group 
+                                                        {/* Join Group Chat */}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    ))}
+                                </ul>
+                           </div>
+                        </>
+                }
             </div>
         </div>
     </>

@@ -18,7 +18,7 @@ function App() {
       <ErrorBoundary 
         FallbackComponent={FallbackComponent}
         >
-          <div className='min-h-screen w-screen bg-gray-900 text-white text-center relative'>
+          <div className='min-h-screen w-screen bg-custom-grey text-white text-center relative'>
             {
               !loginState ?
                 <>

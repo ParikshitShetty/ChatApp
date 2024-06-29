@@ -51,7 +51,8 @@ function ChatRenderer() {
     <>
         <div className=' w-[90%] h-[80vh] max-h-[80vh] overflow-y-scroll flex flex-col justify-start items-start' ref={messagesEndRef}>
            {chatArray?.map((message,index)=>(
-                <span key={index} className={`w-full h-auto text-gray-950 ${reciever.userName ===  message.recieverUserName ? `message-orange` : `message-blue`} ${index === 0 ? `mt-2` : `` }`}>{message.content}</span>
+                <span key={index} className={`w-full h-auto text-gray-950 first:mt-2
+                  ${reciever.userName ===  message.recieverUserName ? `message-orange` : `message-blue`}`}>{message.content}</span>
            ))}
         </div>
     </>

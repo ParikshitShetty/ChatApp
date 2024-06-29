@@ -53,10 +53,10 @@ function Chat() {
     // console.log("userName",userName)
   return (
     <>
-      <div className='h-full w-full flex flex-col justify-between items-center'>
-        <Navbar />
-        <div className='h-full w-full flex justify-between items-center'>
-          <Sidebar />
+      <div className='h-full w-full flex justify-between items-center '>
+        <Sidebar />
+        <div className='h-full w-[73%] flex flex-col justify-center items-center'>
+          <Navbar />
           <main className='h-full w-full flex flex-col justify-end items-end'>
             {groupChatMode ?
               <>
@@ -71,7 +71,7 @@ function Chat() {
               </>
               :
               <>
-                <div className='h-full w-full flex flex-col justify-end items-center font-semibold'>
+                <div className='h-[90vh] w-full flex flex-col justify-center items-center font-semibold'>
                   Select Users to Chat
                 </div>
               </>

@@ -47,7 +47,7 @@ function LoginForm() {
 
 
                     <input type="user_name" id="user_name" name='user_name'
-                        className="bg-transparent border-2 border-gray-300 text-gray-50 text-sm rounded-lg block w-full p-2.5 " 
+                        className="bg-transparent border-2 border-gray-300 dark:custom-pitch-dark text-gray-50 text-sm rounded-lg block w-full p-2.5 " 
                         placeholder="user name" required 
                         ref={inputRef} 
                         value={userName} onChange={InputHandler}/>
