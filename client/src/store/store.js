@@ -26,3 +26,7 @@ export const GroupDataState = atom([
         no_of_people_active: 0 
     }
 ]);
+
+// For chat loader
+export const chatLoaderState = atom(false);
+export const groupChatLoaderState = atom(false);

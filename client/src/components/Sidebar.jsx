@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 // Global States
 import { 
     chatArrayStore,
+    chatLoaderState,
     connectedUsersListStore, 
     groupchatArrayStore, 
+    groupChatLoaderState, 
     GroupChatModeState, 
     GroupDataState, 
     GroupState, 
@@ -13,6 +15,9 @@ import {
     userNameStore} from '../store/store';
 // Socket Io Singleton
 import { initializeSocket } from '../utils/socket';
+// Utils
+import UserListItem from '../utils/UserListItem';
+import GroupListItem from '../utils/GroupListItem';
 
 function Sidebar() {
     const connectedUsersList = useAtomValue(connectedUsersListStore);
@@ -33,6 +38,9 @@ function Sidebar() {
     const setGroupChatArray =  useSetAtom(groupchatArrayStore);
 
     const [toogle,setToggle] = useState(false);
+
+    const setChatLoader = useSetAtom(chatLoaderState);
+    const setGroupChatLoader = useSetAtom(groupChatLoaderState);
     
     // console.log("recieverId",reciever);
 
@@ -55,6 +63,7 @@ function Sidebar() {
         // Return if you are clicking on the same user twice
         if (reciever?.userName === users.userName) return;
 
+        setChatLoader(true);
         setGroup({
             groupName: null, 
             no_of_people_active: null 
@@ -82,10 +91,12 @@ function Sidebar() {
             const response = await fetch(url,options);
             const responseJson = await response.json();
 
-            console.log("responseJson",responseJson);
+            // console.log("responseJson",responseJson);
             setChatArray(responseJson.filteredMessages);
         } catch (error) {
             console.error("Error while getting older messages : ",error)
+        }finally{
+            setChatLoader(false);
         }
     }
 
@@ -96,6 +107,7 @@ function Sidebar() {
 
         if (group?.groupName === groupData.groupName) return;
 
+        setGroupChatLoader(true);
         setReciever({});
         setGroup(groupData);
 
@@ -119,10 +131,12 @@ function Sidebar() {
             const response = await fetch(url,options);
             const responseJson = await response.json();
 
-            console.log("responseJson",responseJson.messages);
+            // console.log("responseJson",responseJson.messages);
             setGroupChatArray(responseJson.messages);
         } catch (error) {
             console.error("Error while getting older messages : ",error)
+        }finally{
+            setGroupChatLoader(false);
         }
     }
 
@@ -165,26 +179,11 @@ function Sidebar() {
                     ?
                         <>
                            <div className="flow-root">
-                                {/* <ul role="list" className="divide-y divide-gray-200 dark:divide-gray-700"> */}
                                 <ul role="list" className="">
-                                {
-                                [...connectedUsersList].filter(user => user.chatID !== sender).
-                                map((users,index)=>(            
-                                    <li key={index} onClick={() => getOldMessages(users)}
-                                    className={`h-12 my-2 cursor-pointer text-gray-900 rounded-xl`}>
-                                        <div className="flex items-center justify-start h-full">
-                                            <div className="w-12 h-full rounded-3xl bg-gray-200 ml-2 py-1">
-                                                <span className='h-full w-full my-1'>
-                                                </span>
-                                                {/* <img src="" alt="" /> */}
-                                            </div>
-                                            <div className={`flex-1 min-w-0 h-full ms-4 rounded-xl inline-flex justify-center items-center transition-all duration-500 ease-in-out ${reciever.chatID === users.chatID ? `bg-gray-200 ` : `dark:text-white `}`}>
-                                                <p className="text-md font-medium truncate first-letter:uppercase ">
-                                                    {users.userName}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </li>
+                                {[...connectedUsersList].filter(user => user.chatID !== sender).map((users,index)=>( 
+                                    <Fragment key={index}>
+                                        <UserListItem key={index} users={users} getOldMessages={getOldMessages}/>
+                                    </Fragment>
                                     ))
                                 }
                                 </ul>
@@ -196,22 +195,9 @@ function Sidebar() {
                            <div className="flow-root">
                                 <ul role="list" className="">
                                     {groupDataArray.map((groupData,index)=>(
-                                        <li key={index} onClick={() => getOldGroupMessages(groupData)}
-                                        className={`h-12 my-2 cursor-pointer text-gray-900 rounded-xl`}>
-                                            <div className="flex items-center justify-start h-full">
-                                                <div className="w-12 h-full rounded-3xl bg-gray-200 ml-2 py-1">
-                                                    <span className='h-full w-full my-1'>
-                                                    </span>
-                                                    {/* <img src="" alt="" /> */}
-                                                </div>
-                                                <div className={`flex-1 min-w-0 h-full ms-4 rounded-xl inline-flex justify-center items-center transition-all duration-500 ease-in-out ${groupData.groupName === group.groupName ? `bg-gray-200 text-black` : `dark:text-white `}`}>
-                                                    <p className="text-sm font-medium truncate first-letter:uppercase">
-                                                        Join { groupData.groupName } Group 
-                                                        {/* Join Group Chat */}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </li>
+                                        <Fragment key={index}>
+                                            <GroupListItem key={index} groupData={groupData} getOldGroupMessages={getOldGroupMessages}/>
+                                        </Fragment>
                                     ))}
                                 </ul>
                            </div>

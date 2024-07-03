@@ -16,6 +16,8 @@ import {
 // Utils
 import { initializeSocket } from '../utils/socket'
 import GroupChatRenderer from '../components/GroupChatRenderer';
+// Common functions
+import { randomHexColorCode } from '../common/colorGenerator';
 
 function Chat() {
     const ref = useRef(true);
@@ -34,8 +36,11 @@ function Chat() {
 
       // TO get all the users connected to the network
       socket.on('users_list',(data)=>{
-        // console.log("users_list",data);
-        setConnectedUsersList(data.usersList)
+        const arr = [...data.usersList].map(item => {
+          return {...item, color : randomHexColorCode() }
+        });
+        console.log("users_list",arr);
+        setConnectedUsersList(arr)
       })
 
       // To the user of a tab

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { IoPaperPlane } from "react-icons/io5";
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 // Utils
@@ -11,6 +11,8 @@ import {
   recieverStore,
   senderIdStore, 
   userNameStore} from '../store/store';
+// Common functions
+import { dateToRedisId } from '../common/dateConverter';
 
 function ChatForm() {
   const [message,setMessage] = useState('');
@@ -37,7 +39,7 @@ function ChatForm() {
     try {
       const socket = initializeSocket(userName);
 
-      console.log("sender",sender)
+      // console.log("sender",sender)
 
       const messgeObj = { 
         receiverChatID:reciever.chatID, 
@@ -46,9 +48,14 @@ function ChatForm() {
         recieverUserName:reciever.userName
       }
       socket.emit('send_message',messgeObj);
+
+      const obj = {
+        id:Date.now(),
+        message:messgeObj
+      }
       setChatArray((prev)=>{
-        return [...prev,messgeObj]
-    });
+        return [...prev,obj]
+      });
 
       setMessage('');
     } catch (error) {
@@ -67,6 +74,10 @@ function ChatForm() {
         sender : userName,
         content : message
       }
+      // const obj = {
+      //   id:Date.now(),
+      //   message:messageObj
+      // }
       // socket.emit("join_group", messageObj);
       socket.emit('send_group_message',messageObj)
 
@@ -82,7 +93,7 @@ function ChatForm() {
     }
   },[reciever])
 
-  console.log(message)
+  // console.log("Date.now()",Date.now());
   return (
     <>
       <div className='w-2/3 h-[10vh] flex justify-end items-end '>
