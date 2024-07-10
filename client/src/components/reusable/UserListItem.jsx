@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAtomValue } from 'jotai';
 // Global State
-import { recieverStore } from '../store/store';
+import { recieverStore } from '../../store/store';
 
 function UserListItem({ users, getOldMessages }) {
   const reciever = useAtomValue(recieverStore);

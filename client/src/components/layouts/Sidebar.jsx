@@ -12,12 +12,14 @@ import {
     GroupState, 
     recieverStore, 
     senderIdStore,
-    userNameStore} from '../store/store';
+    userNameStore} from '../../store/store';
 // Socket Io Singleton
-import { initializeSocket } from '../utils/socket';
+import { initializeSocket } from '../../utils/socket';
 // Utils
-import UserListItem from '../utils/UserListItem';
-import GroupListItem from '../utils/GroupListItem';
+import UserListItem from '../reusable/UserListItem';
+import GroupListItem from '../reusable/GroupListItem';
+// API services
+import { postApiService } from '../../services/postApiService';
 
 function Sidebar() {
     const connectedUsersList = useAtomValue(connectedUsersListStore);
@@ -76,20 +78,8 @@ function Sidebar() {
         const Obj = { "reciever":users.userName, "sender":userName }
         try {
             const url = import.meta.env.VITE_READ_MESSAGES;
-            const options = {
-                method: "POST", 
-                mode: "cors", 
-                cache: "no-cache", 
-                credentials: "same-origin", //include is used to set cookies
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                redirect: "follow",
-                referrerPolicy: "no-referrer", 
-                body: JSON.stringify(Obj)
-            };
-            const response = await fetch(url,options);
-            const responseJson = await response.json();
+            // Make post request
+            const responseJson = await postApiService(url, Obj);
 
             // console.log("responseJson",responseJson);
             setChatArray(responseJson.filteredMessages);
@@ -155,7 +145,8 @@ function Sidebar() {
                 room : group.groupName,
                 sender : userName,
             }
-            socket.emit('join_group', messageObj);
+            const joinGroup = import.meta.env.VITE_SOCKET_JOIN_GROUP;
+            socket.emit(joinGroup, messageObj);
         }
     }, [groupChatMode])
     

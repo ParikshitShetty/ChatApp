@@ -1,4 +1,5 @@
 import { atom } from 'jotai';
+import { randomHexColorCode } from '../common/colorGenerator';
 
 export const connectedUsersListStore = atom([]);
 
@@ -23,7 +24,8 @@ export const GroupState = atom({
 export const GroupDataState = atom([
     {
         groupName: "common", 
-        no_of_people_active: 0 
+        no_of_people_active: 0,
+        color: randomHexColorCode()
     }
 ]);
 

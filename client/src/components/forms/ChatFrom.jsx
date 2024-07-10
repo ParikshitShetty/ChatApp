@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { IoPaperPlane } from "react-icons/io5";
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 // Utils
-import { initializeSocket } from '../utils/socket'
+import { initializeSocket } from '../../utils/socket'
 // Global States 
 import { 
   chatArrayStore,
@@ -10,9 +10,9 @@ import {
   GroupState,
   recieverStore,
   senderIdStore, 
-  userNameStore} from '../store/store';
+  userNameStore} from '../../store/store';
 // Common functions
-import { dateToRedisId } from '../common/dateConverter';
+import { dateToRedisId } from '../../common/dateConverter';
 
 function ChatForm() {
   const [message,setMessage] = useState('');
@@ -47,7 +47,8 @@ function ChatForm() {
         content:message,
         recieverUserName:reciever.userName
       }
-      socket.emit('send_message',messgeObj);
+      const sendMessage = import.meta.env.VITE_SOCKET_SEND_MESSAGE;
+      socket.emit(sendMessage,messgeObj);
 
       const obj = {
         id:Date.now(),
@@ -79,7 +80,8 @@ function ChatForm() {
       //   message:messageObj
       // }
       // socket.emit("join_group", messageObj);
-      socket.emit('send_group_message',messageObj)
+      const sendGroupMessage = import.meta.env.VITE_SOCKET_SEND_GROUP_MESSAGE;
+      socket.emit(sendGroupMessage,messageObj)
 
       setMessage('');
     } catch (error) {

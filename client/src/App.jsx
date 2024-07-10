@@ -4,11 +4,12 @@ import { Toaster } from 'react-hot-toast';
 // Routes
 import Chat from './routes/Chat';
 // Utils
-import FallbackComponent from './utils/FallbackComponent';
+import FallbackComponent from './components/ui/FallbackComponent';
 // Global States
 import { 
   loginStateStore } from "./store/store";
-import LoginForm from "./components/LoginForm";
+// Components
+import LoginForm from "./components/forms/LoginForm";
 
 
 function App() {

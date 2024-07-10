@@ -3,7 +3,7 @@ import { useAtom, useSetAtom } from 'jotai';
 // Global States
 import { 
     loginStateStore,
-    userNameStore } from '../store/store';
+    userNameStore } from '../../store/store';
 
 function LoginForm() {
   const [userName,setUserName] = useAtom(userNameStore);

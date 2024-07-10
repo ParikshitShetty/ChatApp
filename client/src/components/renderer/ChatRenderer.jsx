@@ -1,18 +1,17 @@
 import React, { Fragment, useEffect, useRef, useState } from 'react'
 import { useAtom, useAtomValue } from 'jotai';
-import ReactLoading from 'react-loading';
 // Utils
-import { initializeSocket } from '../utils/socket'
+import { initializeSocket } from '../../utils/socket';
+import Loader from '../ui/Loader';
 // Global States
 import { 
     chatArrayStore, 
     chatLoaderState, 
     GroupChatModeState, 
     recieverStore,
-    userNameStore} from '../store/store';
+    userNameStore} from '../../store/store';
 // Common Functions
-import { redisIdToDateTimeConverter } from '../common/dateConverter';
-import Loader from '../utils/Loader';
+import { redisIdToDateTimeConverter } from '../../common/dateConverter';
 
 function ChatRenderer() {
     const [chatArray,setChatArray] = useAtom(chatArrayStore);
@@ -31,18 +30,23 @@ function ChatRenderer() {
         const socket = initializeSocket(userName);
 
         if (ref.current) {
-
-            socket.on('receive_message',(data)=>{
-                // console.log("data",data)
-                setChatArray((prev)=>{
-                    return [...prev,data]
-                });
+            const recieveMessage = import.meta.env.VITE_SOCKET_RECEIVE_MESSAGE;
+            socket.on(recieveMessage,(data) => {
+              // console.log("receive_message data",data);
+              const obj = {
+                id:Date.now(),
+                message:data
+              }
+              setChatArray((prev)=>{
+                  return [...prev,obj]
+              });
             });
             ref.current = false;
         }
         return () =>{
           if (ref.current) {
-            socket.removeListener('receive_message');
+            const recieveMessage = import.meta.env.VITE_SOCKET_RECEIVE_MESSAGE;
+            socket.removeListener(recieveMessage);
           }
         }
       },[])
@@ -53,7 +57,7 @@ function ChatRenderer() {
       }
     },[chatArray])
     // console.log("reciever",reciever)
-    // console.log("chatArray",chatArray)
+    console.log("chatArray",chatArray)
   return (
     <>
         <div className=' w-[90%] h-[80vh] max-h-[80vh] overflow-y-scroll flex flex-col justify-start items-start' ref={messagesEndRef}>

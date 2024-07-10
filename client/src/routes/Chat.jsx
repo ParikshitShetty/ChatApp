@@ -1,10 +1,10 @@
 import React, { useEffect, useRef } from 'react'
 import { useAtomValue, useSetAtom } from 'jotai';
 // Components
-import ChatForm from '../components/ChatFrom'
-import Sidebar from '../components/Sidebar';
-import Navbar from '../components/Navbar';
-import ChatRenderer from '../components/ChatRenderer';
+import ChatForm from '../components/forms/ChatFrom'
+import Sidebar from '../components/layouts/Sidebar';
+import Navbar from '../components/layouts/Navbar';
+import ChatRenderer from '../components/renderer/ChatRenderer';
 // Global states
 import { 
   connectedUsersListStore,
@@ -15,7 +15,7 @@ import {
 } from '../store/store';
 // Utils
 import { initializeSocket } from '../utils/socket'
-import GroupChatRenderer from '../components/GroupChatRenderer';
+import GroupChatRenderer from '../components/renderer/GroupChatRenderer';
 // Common functions
 import { randomHexColorCode } from '../common/colorGenerator';
 
@@ -35,24 +35,29 @@ function Chat() {
       const socket = initializeSocket(userName);
 
       // TO get all the users connected to the network
-      socket.on('users_list',(data)=>{
+      const userList = import.meta.env.VITE_SOCKET_USER_LIST;
+      socket.on(userList,(data)=>{
         const arr = [...data.usersList].map(item => {
           return {...item, color : randomHexColorCode() }
         });
-        console.log("users_list",arr);
+        // console.log("users_list",arr);
         setConnectedUsersList(arr)
       })
 
       // To the user of a tab
-      socket.on('current_user',(data)=>{
+      const currentUser = import.meta.env.VITE_SOCKET_CURRENT_USER;
+      socket.on(currentUser,(data)=>{
         // console.log("data",data)
         setSenderId(data.chatID);
       })
 
       ref.current = false;
       return ()=>{
-        socket.removeListener('users_list');
-        socket.removeListener('current_user');
+        const userList = import.meta.env.VITE_SOCKET_USER_LIST;
+        const currentUser = import.meta.env.VITE_SOCKET_CURRENT_USER;
+        
+        socket.removeListener(userList);
+        socket.removeListener(currentUser);
       }
     },[]);
     // console.log("userName",userName)

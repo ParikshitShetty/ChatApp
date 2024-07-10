@@ -2,8 +2,8 @@ import React, { useEffect, useRef, useState, Fragment } from 'react'
 import { useAtom, useAtomValue } from 'jotai';
 import toast from 'react-hot-toast';
 // Utils
-import { initializeSocket } from '../utils/socket'
-import Loader from '../utils/Loader';
+import { initializeSocket } from '../../utils/socket'
+import Loader from '../ui/Loader';
 // Global States
 import { 
     groupchatArrayStore, 
@@ -11,9 +11,9 @@ import {
     GroupChatModeState, 
     GroupState, 
     recieverStore,
-    userNameStore} from '../store/store';
+    userNameStore} from '../../store/store';
 // Common functions
-import { redisIdToDateTimeConverter } from '../common/dateConverter';
+import { redisIdToDateTimeConverter } from '../../common/dateConverter';
 
 function GroupChatRenderer() {
     const [chatArray,setChatArray] = useAtom(groupchatArrayStore);
@@ -36,7 +36,8 @@ function GroupChatRenderer() {
       const socket = initializeSocket(userName);
 
       if (ref.current) {
-        socket.on('receive_welcome_message',(message)=>{
+        const receieveWelcomeMessage = import.meta.env.VITE_SOCKET_RECEIVE_WELCOME_MESSAGE;
+        socket.on(receieveWelcomeMessage,(message) => {
           // console.log("receive_welcome_message",message);
           if (userName === message.sender) {
             toast.success(message.message_self)
@@ -44,10 +45,12 @@ function GroupChatRenderer() {
           }
           toast.success(message.message_others)
         });
-        
-        socket.on('receive_group_message',(message)=>{
+
+        const receieveGroupMessage = import.meta.env.VITE_SOCKET_RECEIVE_GROUP_MESSAGE;
+        socket.on(receieveGroupMessage,(message) => {
           const newObj = {
-            message:message
+            id : Date.now(),
+            message : message
           };
           setChatArray( (prev) => {
             return [ ...prev, newObj ]
@@ -57,8 +60,11 @@ function GroupChatRenderer() {
       }
       return () => {
         if (ref.current) {
-          socket.removeListener("receive_welcome_message");
-          socket.removeListener("receive_group_message");
+          const receieveWelcomeMessage = import.meta.env.VITE_SOCKET_RECEIVE_WELCOME_MESSAGE;
+          const receieveGroupMessage = import.meta.env.VITE_SOCKET_RECEIVE_GROUP_MESSAGE;
+
+          socket.removeListener(receieveWelcomeMessage);
+          socket.removeListener(receieveGroupMessage);
         }
       }
     },[]);

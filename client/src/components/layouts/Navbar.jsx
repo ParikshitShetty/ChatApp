@@ -7,7 +7,7 @@ import {
     GroupState,
     loginStateStore,
     recieverStore,
-    userNameStore} from '../store/store';
+    userNameStore} from '../../store/store';
 
 function Navbar() {
     const [userName,setUserName] = useAtom(userNameStore);

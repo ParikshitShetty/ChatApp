@@ -12,11 +12,13 @@ function redisIdToDateTimeConverter(redisId,parts) {
     };
 
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const month = String(date.getMonth()).padStart(2, '0'); // Months are 0-based
+    // const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
     const day = String(date.getDate()).padStart(2, '0');
     // const seconds = String(date.getSeconds()).padStart(2, '0');
 
     const dateObj = calendar[Number(month)]
+    if(dateObj === undefined) return 'argument is empty';
     return `${year}-${dateObj.month}-${day}`;
 
     // Format the date and time as yyyy-mm-dd HH:MM:SS

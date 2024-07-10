@@ -1,9 +1,7 @@
 import React from 'react';
 import { useAtomValue } from 'jotai';
 // Global States
-import { GroupState } from '../store/store';
-// Common functions
-import { randomHexColorCode } from '../common/colorGenerator';
+import { GroupState } from '../../store/store';
 
 function GroupListItem({ groupData, getOldGroupMessages }) {
     const group = useAtomValue(GroupState);
@@ -13,7 +11,7 @@ function GroupListItem({ groupData, getOldGroupMessages }) {
             className={`h-12 my-2 cursor-pointer text-gray-900 rounded-xl`}>
             <div className="flex items-center justify-start h-full">
                 <div className="w-12 h-full rounded-3xl ml-2 py-1"
-                style={{ backgroundColor : randomHexColorCode() }}>
+                style={{ backgroundColor : groupData.color }}>
                     <span className='h-full w-full flex justify-center items-center text-xl font-semibold'>
                         {groupData.groupName.charAt(0).toUpperCase()}
                     </span>
