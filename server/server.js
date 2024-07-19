@@ -2,6 +2,7 @@ const express = require('express');
 const app = express()
 const cors = require('cors')
 const bodyParser = require('body-parser');
+const fs = require('fs');
 // Config env file
 require('dotenv').config();
 
@@ -133,6 +134,15 @@ ioInstance.on('connection', async(socket) => {
           socket.broadcast.to(group_message_obj.room).emit("receive_group_message", group_message_obj);
   
           redisClient.xAdd('GroupMessages','*',group_message_obj);
+        });
+      });
+
+      socket.on("upload", (file, callback) => {
+        console.log("upload",file); // <Buffer 25 50 44 ...>
+    
+        // save the content to the disk, for example
+        fs.writeFile("./tmp/upload", file, (err) => {
+          callback({ message: err ? "failure" : "success" });
         });
       });
 

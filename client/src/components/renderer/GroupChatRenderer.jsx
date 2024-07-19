@@ -14,9 +14,12 @@ import {
     userNameStore} from '../../store/store';
 // Common functions
 import { redisIdToDateTimeConverter } from '../../common/dateConverter';
+import { uniqueDate } from '../../common/uniqueDate';
 
 function GroupChatRenderer() {
     const [chatArray,setChatArray] = useAtom(groupchatArrayStore);
+
+    const [dateArr,setDateArr] = useState([]);
 
     const reciever = useAtomValue(recieverStore);
 
@@ -73,6 +76,8 @@ function GroupChatRenderer() {
       if (messagesEndRef.current && chatArray.length) {
         messagesEndRef.current.scrollTop =  messagesEndRef.current.scrollHeight;
       }
+      const array = uniqueDate(chatArray);
+      setDateArr(array);
     },[chatArray])
     // console.log("chatArray",chatArray);
   return (
@@ -88,13 +93,17 @@ function GroupChatRenderer() {
             <>
               {chatArray?.map((message,index)=>(
                 <Fragment key={index}>
-                  <div className={`w-full h-auto text-gray-950 first:mt-2 message-middle`}>
-                    {redisIdToDateTimeConverter(message.id)}
-                  </div>
-                  {/* <>
-                    <span key={index} className={`text-gray-950 ${userName ===  message.message.sender ? `message-orange` : `message-blue`} ${index === 0 ? `mt-2` : `` }`}>
-                      <p className={`font-semibold mb-2 first-letter:uppercase`}>{userName === message.message.sender ? `You` : message.message.sender}</p>{message.message.content}</span>
-                  </> */}
+                  { dateArr.length > 0 && dateArr[index] !== "" && (
+                      <div className={`w-full h-auto text-gray-950 first:mt-2 message-middle`}>
+                        {dateArr[index].split('-')[2] + ' ' + dateArr[index].split('-')[1] + ' ' + dateArr[index].split('-')[0] }
+                      </div>
+                    )}
+                  <span key={index} className={`text-gray-950 ${userName ===  message.message.sender ? `message-orange` : `message-blue`} ${index === 0 ? `mt-2` : `` }`}>
+                    <p className={`font-semibold mb-2 first-letter:uppercase`}>
+                      {userName === message.message.sender ? `You` : message.message.sender}
+                    </p>
+                    {message.message.content}
+                  </span>
                   <div className={`w-full h-auto text-gray-950 first:mt-2
                     ${userName ===  message.message.sender ? `message-orange` : `message-blue`} ${index === 0 ? `mt-2` : `` }`}>
                       {message.message.content}
