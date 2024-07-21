@@ -25,6 +25,7 @@ const { readGroupMessages } = require('./controller/groupMessageReaderController
 // Import SocketIo Handlers
 const disconnectHandler = require('./socketIoHandlers/disconnectHandler');
 const personalMessageHanlder = require('./socketIoHandlers/personalMessageHandler');
+const uploadHandler = require('./socketIoHandlers/uploadHandler');
 
 const port = process.env.SERVER_PORT;
 const server = createServer(app);
@@ -48,20 +49,9 @@ const ioInstance = new Server(server, {
   cors: {
       origin: '*',
       methods: ['GET', 'POST'],
-  }
+  },
+  maxHttpBufferSize: 1e8 // 100 MB
 });
-
-let users = [];
-const addUser = (param) => {
-  const { id, name, room } = param;
-  console.log("id, name, room",id, name, room);
-  if (!name || !room) return { error: "name and room required." };
-  const user = { id, name, room };
-
-  users.push(user);
-
-  return { user };
-};
 
 ioInstance.on('connection', async(socket) => {
   try {
@@ -104,6 +94,13 @@ ioInstance.on('connection', async(socket) => {
         console.log("messageSender messge id",messageSender);
       });
 
+      // Send individual files with messages
+      socket.on("send_file", async(file) => {
+        const messageObject = await uploadHandler(file);
+        const messageSender = await personalMessageHanlder(socket,messageObject,userName);
+        console.log("messageSender messge id",messageSender);
+      });
+
       let senderGlobal = null;
       // Group Messaging
       socket.on('join_group', async( message ) => {
@@ -135,14 +132,11 @@ ioInstance.on('connection', async(socket) => {
   
           redisClient.xAdd('GroupMessages','*',group_message_obj);
         });
-      });
-
-      socket.on("upload", (file, callback) => {
-        console.log("upload",file); // <Buffer 25 50 44 ...>
-    
-        // save the content to the disk, for example
-        fs.writeFile("./tmp/upload", file, (err) => {
-          callback({ message: err ? "failure" : "success" });
+        // send_file
+        socket.on("send_group_file", async(file) => {
+          const messageObject = await uploadHandler(file);
+          const messageSender = await personalMessageHanlder(socket,messageObject,userName);
+          console.log("messageSender messge id",messageSender);
         });
       });
 

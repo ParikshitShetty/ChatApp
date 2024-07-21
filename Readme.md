@@ -28,14 +28,15 @@ Tech Stack
         Docker
 
 Installation
-    Make Sure you have docker installed
-    cd into ChatApp folder
-    Run `Docker compose up --build -d` to run(Windows) 
-    OR
-    Run redis-server to run this app
-    For redis-server on windows use WSL
-    You can cd into server and client seperately
-    And run `npm run dev` to run server & and client
+    Make Sure you have docker installed.
+    cd into ChatApp folder <br>
+    Run `Docker compose up --build -d` to run(Windows).<br>
+    OR <br>
+    Run redis-server to run this app.<br>
+    For redis-server on windows use WSL.<br>
+    You can cd into server and client folders seperately.<br>
+    And run `npm run dev` to run server & and client.<br>
+    
 Prerequisites
 
     Node.js (v18 or higher)

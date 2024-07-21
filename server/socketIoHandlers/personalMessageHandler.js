@@ -15,7 +15,8 @@ const personalMessageHanlder = async(socket,message,userName) =>{
         const redisMsgObj = {
           senderUserName : userName,
           recieverUserName : message.recieverUserName,
-          content : message.content
+          content : message.content,
+          path: message?.path ? message?.path : null
         }
         // console.log("redisMsgObj",redisMsgObj)
     

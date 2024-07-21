@@ -82,7 +82,7 @@ function GroupChatRenderer() {
     // console.log("chatArray",chatArray);
   return (
     <>
-        <div className='w-[90%] max-h-[80vh] h-[80vh] overflow-y-scroll flex flex-col justify-start items-start' ref={messagesEndRef}>
+        <div className='w-[90%] max-h-[77vh] h-[80vh] overflow-y-scroll flex flex-col justify-start items-start' ref={messagesEndRef}>
         {
           groupChatLoader 
           ?

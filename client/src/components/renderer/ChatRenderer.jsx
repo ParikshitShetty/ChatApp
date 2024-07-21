@@ -65,7 +65,7 @@ function ChatRenderer() {
     console.log("chatArray",chatArray)
   return (
     <>
-        <div className=' w-[90%] h-[80vh] max-h-[80vh] overflow-y-scroll flex flex-col justify-start items-start' ref={messagesEndRef}>
+        <div className=' w-[90%] h-[77vh] max-h-[80vh] overflow-y-scroll flex flex-col justify-start items-start' ref={messagesEndRef}>
           {
             chatLoader 
             ?

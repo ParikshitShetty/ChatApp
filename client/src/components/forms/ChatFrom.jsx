@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useReducer, useRef, useState } from 'react'
 import { IoPaperPlane } from "react-icons/io5";
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { FiPaperclip } from "react-icons/fi";
 // Utils
 import { initializeSocket } from '../../utils/socket'
 // Global States 
@@ -13,7 +14,7 @@ import {
   userNameStore} from '../../store/store';
 // Common functions
 import { dateToRedisId } from '../../common/dateConverter';
-import { FiPaperclip } from "react-icons/fi";
+import { formatFileSize } from '../../common/fileSizeCalculator';
 
 function ChatForm() {
   const [message,setMessage] = useState('');
@@ -30,7 +31,7 @@ function ChatForm() {
 
   const group = useAtomValue(GroupState);
 
-  const [file, setFile] = useState('');
+  const [file, setFile] = useState({});
 
   const inputRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -49,10 +50,15 @@ function ChatForm() {
         receiverChatID:reciever.chatID, 
         senderChatID:sender, 
         content:message,
-        recieverUserName:reciever.userName
+        recieverUserName:reciever.userName,
+        senderUserName:userName
       }
-      const sendMessage = import.meta.env.VITE_SOCKET_SEND_MESSAGE;
-      socket.emit(sendMessage,messgeObj);
+      // Send file
+      if(file?.name) uploadFile(messgeObj);
+      else {
+        const sendMessage = import.meta.env.VITE_SOCKET_SEND_MESSAGE;
+        socket.emit(sendMessage,messgeObj);
+      } 
 
       const obj = {
         id:Date.now(),
@@ -93,21 +99,29 @@ function ChatForm() {
     }
   }
 
-  const handleChange = (event) => {
-    console.log(event.target.files[0]);
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const fileContents = e.target.result;
-        console.log(fileContents);
-      };
-      reader.readAsText(file); 
-    }
+  const fileChangeHandle = (event) => {
+    const InputFile = event.target.files[0];
+    setFile(InputFile);
   }
 
   const handleClick = () => {
-    if (!fileInputRef.current) return;
-    fileInputRef.current.click();
+    const fileInput = document.getElementById("fileInput");
+    if (fileInput) fileInput.click();
+  }
+
+  const uploadFile = (messgeObj) => {
+    if(!file){
+      console.log('file is empty');
+      return 'file is empty';
+    } 
+    const socket = initializeSocket(userName);
+    
+    const object = { name:file.name, type:file.type,file:file, messgeObj:messgeObj};
+    const sendFileEvent = import.meta.env.VITE_SOCKET_SEND_FILE;
+    socket.emit(sendFileEvent, object);
+    setFile({});
+
+    // console.log("size",formatFileSize(file.size));
   }
 
   useEffect(()=>{
@@ -116,17 +130,20 @@ function ChatForm() {
     }
   },[reciever])
 
-  // console.log("Date.now()",Date.now());
+  console.log(import.meta.env.VITE_SOCKET_SEND_FILE)
+  if(file?.name) console.log("file",file);
   return (
     <>
-      <div className='w-[70%] h-[10vh] flex justify-end items-end '>
+      <div className='w-[70%] h-[13vh] flex justify-end items-end relative'>
         <form className='w-full h-full flex justify-center items-end mb-4' onSubmit={groupChatMode ? groupFormSubmit : formSubmit}>
-          {/* <div className='w-20'>
-            <FiPaperclip className='w-7 h-7 ml-2 cursor-pointer' onClick={handleClick}>
-              <input type='file' ref={fileInputRef} value={file} onChange={handleChange}
-               className=''/>
-            </FiPaperclip> 
-          </div> */}
+          <div className='w-20'>
+            <FiPaperclip className='w-7 h-7 ml-2 cursor-pointer' onClick={handleClick} />
+              <input type='file' id='fileInput' onChange={fileChangeHandle}
+               className='hidden'/>
+          </div>
+          {file?.name &&
+            <p className='absolute top-1 left-[8%]'> file: {file?.name}</p>
+          }
           <input type="text" id="message" placeholder="hey" required
           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-custom-pitch-dark  dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-black" 
           ref={inputRef}
