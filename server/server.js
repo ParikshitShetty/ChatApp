@@ -21,6 +21,7 @@ const { usersGetter } = require('./common/usersGetter');
 // Import Controllers
 const { readMessages } = require('./controller/messageReaderController');
 const { readGroupMessages } = require('./controller/groupMessageReaderController');
+const { downloadFile } = require('./controller/downloadFile');
 
 // Import SocketIo Handlers
 const disconnectHandler = require('./socketIoHandlers/disconnectHandler');
@@ -160,4 +161,5 @@ server.listen(port,'0.0.0.0', () => {
   // Define API routes here
   app.post('/api/read_messages',readMessages);
   app.post('/api/read_group_messages',readGroupMessages);
+  app.post("/api/download", downloadFile);
 });
