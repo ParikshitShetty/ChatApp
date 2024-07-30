@@ -2,7 +2,7 @@ const express = require('express');
 const app = express()
 const cors = require('cors')
 const bodyParser = require('body-parser');
-const fs = require('fs');
+const mongoose = require('mongoose');
 // Config env file
 require('dotenv').config();
 
@@ -27,6 +27,9 @@ const { downloadFile } = require('./controller/downloadFile');
 const disconnectHandler = require('./socketIoHandlers/disconnectHandler');
 const personalMessageHanlder = require('./socketIoHandlers/personalMessageHandler');
 const uploadHandler = require('./socketIoHandlers/uploadHandler');
+
+// Db handlers
+const { readUsers, updateUser } = require('./utils/usersCollectionHandler')
 
 const port = process.env.SERVER_PORT;
 const server = createServer(app);
@@ -70,7 +73,8 @@ ioInstance.on('connection', async(socket) => {
       console.log("username",userName);
 
       // To add unique users to the cache
-      await redisClient.hSet('Users', userName, userObj);
+      // await redisClient.hSet('Users', userName, userObj);
+      await updateUser(userName, userObj);
 
       const parsedObjects = await usersGetter();
 
@@ -147,11 +151,17 @@ ioInstance.on('connection', async(socket) => {
     
 });
 
+mongoose.connect(process.env.MONGO_DB_CONN_STRING)
+  .then(() => console.log('Connected to',process.env.MONGO_DB_CONN_STRING))
+  .catch(err => console.error("Error while connecting to Mongodb: ",err));
+
 app.get('/', async(req, res) => {
   const result = await redisClient.xRange('GroupMessages', '-', '+');
-  const existingUser = await redisClient.hGetAll('Users');
+  // const existingUser = await redisClient.hGetAll('Users');
+  const existingUser = await readUsers();
+  // console.log("existingUser",existingUser)
 
-  console.log("result",result)
+  // console.log("result",result)
   res.json({ GroupMessages:result ,userList:existingUser});
 });
 

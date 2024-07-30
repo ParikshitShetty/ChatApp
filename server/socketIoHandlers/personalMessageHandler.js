@@ -1,6 +1,8 @@
 // redisClient connection
 const redisClient = require('../redisClient');
 
+const { readUsers } = require('../utils/usersCollectionHandler')
+
 const personalMessageHanlder = async(socket,message,userName) =>{
     try {
         const messageObj = {

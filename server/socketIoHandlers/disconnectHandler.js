@@ -2,6 +2,8 @@
 const redisClient = require('../redisClient');
 // Common Functions
 const { usersGetter } = require('../common/usersGetter');
+// Db hanlders
+const { updateUser } = require('../utils/usersCollectionHandler');
 
 const disconnectHandler = async(socket,ioInstance,chatID,userObj,userName) =>{
     try {
@@ -13,8 +15,10 @@ const disconnectHandler = async(socket,ioInstance,chatID,userObj,userName) =>{
         userObj.status = 'offline';
         userObj = JSON.stringify(userObj);
 
+        console.log("userObj disconnect",userObj)
         // Update the status in redis
-        await redisClient.hSet('Users', userName, userObj);
+        // await redisClient.hSet('Users', userName, userObj);
+        await updateUser(userName,userObj)
 
         const objectsOnDisconnect = await usersGetter();
         // Broadcast the updated users list to all clients
