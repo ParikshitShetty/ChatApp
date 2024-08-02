@@ -1,11 +1,14 @@
 // redisClient connection
 const redisClient = require('../redisClient');
 
+const { readGroupMessage } = require('../utils/groupMessageCollectionHandler');
+
 const readGroupMessages = async(req, res) => {
     const { reciever, sender } = req.body;
     try {
       // console.log("reciever",reciever,'sender',sender)
-      const messages = await redisClient.xRange('GroupMessages', '-', '+');
+      // const messages = await redisClient.xRange('GroupMessages', '-', '+');
+      const messages = await readGroupMessage();
 
       // const filteredMessages =  messages.filter(message => ((message.message.senderUserName === sender && message.message.recieverUserName === reciever) || (message.message.senderUserName === reciever && message.message.recieverUserName === sender)) 
       // ).map(message => message.message);

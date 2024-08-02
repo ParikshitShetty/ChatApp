@@ -19,9 +19,9 @@ const createUser = async(userData) => {
         if (typeof parsedObject !== 'object') throw new Error("Input data must be an object");
 
         const details = new userModel(parsedObject)
-        console.log("details",details);
+        // console.log("details",details);
         const createdUser = await details.save();
-        console.log("createdUser",createdUser)
+        // console.log("createdUser",createdUser)
         return createdUser;
     } catch (error) {
         console.error("Error while creating user:",error);
@@ -31,7 +31,7 @@ const createUser = async(userData) => {
 const deleteUser = async({ userName }) => {
     try {
         const deletedUser = await userModel.deleteOne({ userName });
-        console.log("deletedUser",deletedUser);
+        // console.log("deletedUser",deletedUser);
         return deletedUser;
     } catch (error) {
         console.error("Error while deleting user:",error);
@@ -44,9 +44,9 @@ const updateUser = async(userName,newData) => {
         const usersData = await userModel.findOne({ userName }).exec();
   
         const parsedObject = JSON.parse(newData);
-        console.log("parsedObject",parsedObject)
+        // console.log("parsedObject",parsedObject)
         if (usersData && usersData.userName === userName){
-            console.log("Updating user")
+            // console.log("Updating user")
             const updatedUser = await userModel.updateOne(usersData,parsedObject).exec();
             console.log("updatedUser",updatedUser)
             return updatedUser;

@@ -16,10 +16,10 @@ const { Server } = require("socket.io");
 const redisClient = require('./redisClient');
 
 // Import common functions
-const { usersGetter } = require('./common/usersGetter');
+// const { usersGetter } = require('./common/usersGetter');
 
 // Import Controllers
-const { readMessages } = require('./controller/messageReaderController');
+const { readPerosnalMessages } = require('./controller/messageReaderController');
 const { readGroupMessages } = require('./controller/groupMessageReaderController');
 const { downloadFile } = require('./controller/downloadFile');
 
@@ -29,7 +29,8 @@ const personalMessageHanlder = require('./socketIoHandlers/personalMessageHandle
 const uploadHandler = require('./socketIoHandlers/uploadHandler');
 
 // Db handlers
-const { readUsers, updateUser } = require('./utils/usersCollectionHandler')
+const { readUsers, updateUser } = require('./utils/usersCollectionHandler');
+const { readGroupMessage, createGroupMessage } = require('./utils/groupMessageCollectionHandler');
 
 const port = process.env.SERVER_PORT;
 const server = createServer(app);
@@ -76,7 +77,8 @@ ioInstance.on('connection', async(socket) => {
       // await redisClient.hSet('Users', userName, userObj);
       await updateUser(userName, userObj);
 
-      const parsedObjects = await usersGetter();
+      const parsedObjects = await readUsers();
+      // console.log("parsedObjects",parsedObjects)
 
       socket.join(chatID);
 
@@ -135,7 +137,9 @@ ioInstance.on('connection', async(socket) => {
           // Broadcast to whoever is in the channel
           socket.broadcast.to(group_message_obj.room).emit("receive_group_message", group_message_obj);
   
-          redisClient.xAdd('GroupMessages','*',group_message_obj);
+          const groupMessageObj = await createGroupMessage(group_message_obj);
+          console.log("groupMessageObj",groupMessageObj);
+          // redisClient.xAdd('GroupMessages','*',group_message_obj);
         });
         // send_file
         socket.on("send_group_file", async(file) => {
@@ -156,8 +160,10 @@ mongoose.connect(process.env.MONGO_DB_CONN_STRING)
   .catch(err => console.error("Error while connecting to Mongodb: ",err));
 
 app.get('/', async(req, res) => {
-  const result = await redisClient.xRange('GroupMessages', '-', '+');
+  // const result = await redisClient.xRange('GroupMessages', '-', '+');
   // const existingUser = await redisClient.hGetAll('Users');
+
+  const result = await readGroupMessage();
   const existingUser = await readUsers();
   // console.log("existingUser",existingUser)
 
@@ -169,7 +175,7 @@ server.listen(port,'0.0.0.0', () => {
   console.log('server running at http://localhost:3000');
 
   // Define API routes here
-  app.post('/api/read_messages',readMessages);
+  app.post('/api/read_messages',readPerosnalMessages);
   app.post('/api/read_group_messages',readGroupMessages);
   app.post("/api/download", downloadFile);
 });

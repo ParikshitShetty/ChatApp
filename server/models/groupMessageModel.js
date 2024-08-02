@@ -3,8 +3,14 @@ const {
   model } = require('mongoose');
 
 const groupMessageSchema = new Schema({
-  room: String, 
-  sender: String,
+  room: {
+    type: String,
+    required:true,
+  }, 
+  sender: {
+    type: String,
+    required:true,
+  },
   content: String,
   path: String,
   timeStamp:{

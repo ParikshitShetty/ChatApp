@@ -1,9 +1,8 @@
 // redisClient connection
 const redisClient = require('../redisClient');
-// Common Functions
-const { usersGetter } = require('../common/usersGetter');
+
 // Db hanlders
-const { updateUser } = require('../utils/usersCollectionHandler');
+const { updateUser, readUsers } = require('../utils/usersCollectionHandler');
 
 const disconnectHandler = async(socket,ioInstance,chatID,userObj,userName) =>{
     try {
@@ -20,7 +19,7 @@ const disconnectHandler = async(socket,ioInstance,chatID,userObj,userName) =>{
         // await redisClient.hSet('Users', userName, userObj);
         await updateUser(userName,userObj)
 
-        const objectsOnDisconnect = await usersGetter();
+        const objectsOnDisconnect = await readUsers();
         // Broadcast the updated users list to all clients
         const disconnect_emit = ioInstance.emit('users_list', { usersList: objectsOnDisconnect });
         return disconnect_emit;

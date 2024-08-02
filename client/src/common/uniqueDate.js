@@ -5,12 +5,13 @@ export function uniqueDate(chatArray) {
     let array = [];
     for (let index = 0; index < chatArray.length; index++) {
       const element = chatArray[index];
-      const date = redisIdToDateTimeConverter(element.id);
-      if (!array.includes(date)){
-        array.push(date);
-        continue;
-      }
-      array.push('');
+      // const date = redisIdToDateTimeConverter(element.id);
+      // if (!array.includes(date)){
+      //   array.push(date);
+      //   continue;
+      // }
+      // array.push('');
+      array.push(element.timeStamp);
     }
     return array
 }

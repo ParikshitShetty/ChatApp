@@ -1,8 +1,8 @@
-const { messageModel } = require('../models/messageModel');
+const { groupMessageModel } = require('../models/groupMessageModel');
 
-const readMessage = async() => {
+const readGroupMessage = async() => {
     try {
-        const messageData = await messageModel.find().exec();
+        const messageData = await groupMessageModel.find().exec();
         console.log("messageData",messageData)
         return messageData;
     } catch (error) {
@@ -10,14 +10,14 @@ const readMessage = async() => {
     }
 };
 
-const createMessage = async(message) => {
+const createGroupMessage = async(message) => {
     try {
-        // console.log("createMessage message",message);
+        // console.log("createGroupMessage message",message);
 
         // Check the type of userData
         if (typeof message !== 'object') throw new Error("Input data must be an object");
 
-        const details = new messageModel(message)
+        const details = new groupMessageModel(message)
         console.log("details",details);
         const createdMessage = await details.save();
         console.log("createdMessage",createdMessage)
@@ -27,9 +27,9 @@ const createMessage = async(message) => {
     }
 }
 
-const deleteMessage = async({ userName }) => {
+const deleteGroupMessage = async({ userName }) => {
     try {
-        const deletedMessage = await messageModel.deleteOne({ userName });
+        const deletedMessage = await groupMessageModel.deleteOne({ userName });
         console.log("deletedMessage",deletedMessage);
         return deletedMessage;
     } catch (error) {
@@ -38,18 +38,18 @@ const deleteMessage = async({ userName }) => {
 }
 
 // In progress
-const updateMessage = async(newMessage) => {
+const updateGroupMessage = async(newMessage) => {
     try {
         console.log("newMessage",newMessage)
-        const message = await messageModel.findOne({ senderUserName:newMessage.senderUserName }).exec();
+        const message = await groupMessageModel.findOne({ senderUserName:newMessage.senderUserName }).exec();
         console.log("message",message)
         if (message && message.length > 0){
             console.log("Updating user")
-            const updatedMessage = await messageModel.updateOne({...message}, {...newMessage}).updatedMessage();
+            const updatedMessage = await groupMessageModel.updateOne({...message}, {...newMessage}).updatedMessage();
             return updatedMessage;
         } 
         console.log("user doesn't exist");
-        const createdMessage = await createMessage(newMessage);
+        const createdMessage = await createGroupMessage(newMessage);
         return createdMessage;
     } catch (error) {
         console.error("Error while updating message:",error);
@@ -57,8 +57,8 @@ const updateMessage = async(newMessage) => {
 }
 
 module.exports = { 
-    readMessage,
-    createMessage,
-    deleteMessage,
-    updateMessage
+    readGroupMessage,
+    createGroupMessage,
+    deleteGroupMessage,
+    updateGroupMessage
 };

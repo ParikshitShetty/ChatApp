@@ -52,8 +52,8 @@ function GroupChatRenderer() {
         const receieveGroupMessage = import.meta.env.VITE_SOCKET_RECEIVE_GROUP_MESSAGE;
         socket.on(receieveGroupMessage,(message) => {
           const newObj = {
-            id : Date.now(),
-            message : message
+            timeStamp:new Date().toISOString(),
+            ...message
           };
           setChatArray( (prev) => {
             return [ ...prev, newObj ]
@@ -79,7 +79,7 @@ function GroupChatRenderer() {
       const array = uniqueDate(chatArray);
       setDateArr(array);
     },[chatArray])
-    // console.log("chatArray",chatArray);
+    console.log("dateArr",dateArr);
   return (
     <>
         <div className='w-[90%] max-h-[77vh] h-[80vh] overflow-y-scroll flex flex-col justify-start items-start' ref={messagesEndRef}>
@@ -93,22 +93,23 @@ function GroupChatRenderer() {
             <>
               {chatArray?.map((message,index)=>(
                 <Fragment key={index}>
-                  { dateArr.length > 0 && dateArr[index] !== "" && (
+                  { dateArr.length > 0 && dateArr[index] && dateArr[index] !== "" && (
                       <div className={`w-full h-auto text-gray-950 first:mt-2 message-middle`}>
                         {dateArr[index].split('-')[2] + ' ' + dateArr[index].split('-')[1] + ' ' + dateArr[index].split('-')[0] }
                       </div>
                     )}
-                  <span key={index} className={`text-gray-950 ${userName ===  message.message.sender ? `message-orange` : `message-blue`} ${index === 0 ? `mt-2` : `` }`}>
+                  <span key={index} className={`text-gray-950 ${userName ===  message.sender ? `message-orange` : `message-blue`} ${index === 0 ? `mt-2` : `` }`}>
                     <p className={`font-semibold mb-2 first-letter:uppercase`}>
-                      {userName === message.message.sender ? `You` : message.message.sender}
+                      {userName === message.sender ? `You` : message.sender}
                     </p>
-                    {message.message.content}
+                    {message.content}
                   </span>
                   <div className={`w-full h-auto text-gray-950 first:mt-2
-                    ${userName ===  message.message.sender ? `message-orange` : `message-blue`} ${index === 0 ? `mt-2` : `` }`}>
-                      {message.message.content}
-                      <p className={`mt-1 ${reciever.userName ===  message.message.recieverUserName ? `text-end` : `text-start`}`}>
-                        {redisIdToDateTimeConverter(message.id,true)}
+                    ${userName ===  message.sender ? `message-orange` : `message-blue`} ${index === 0 ? `mt-2` : `` }`}>
+                      {message.content}
+                      <p className={`mt-1 ${reciever.userName ===  message.recieverUserName ? `text-end` : `text-start`}`}>
+                        {/* {redisIdToDateTimeConverter(message.timeStamp,true)} */}
+                        {message.timeStamp}
                       </p>
                   </div>
                 </Fragment>

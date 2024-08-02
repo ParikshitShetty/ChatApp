@@ -3,8 +3,14 @@ const {
   model } = require('mongoose');
   
   const messageSchema = new Schema({
-    senderUserName: String, 
-    recieverUserName: String,
+    senderUserName: {
+      type: String,
+      required:true,
+    }, 
+    recieverUserName: {
+      type: String,
+      required:true,
+    },
     content: String,
     path: String,
     timeStamp:{
