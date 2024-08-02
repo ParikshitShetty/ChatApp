@@ -1,6 +1,3 @@
-// redisClient connection
-const redisClient = require('../redisClient');
-
 // Db hanlders
 const { updateUser, readUsers } = require('../utils/usersCollectionHandler');
 
@@ -9,14 +6,12 @@ const disconnectHandler = async(socket,ioInstance,chatID,userObj,userName) =>{
         socket.leave(chatID);
         console.log("Disconnected: ",chatID);
 
-        // Convert json string to objects and convert it back to string since redis only stores strings
         userObj = JSON.parse(userObj);
         userObj.status = 'offline';
         userObj = JSON.stringify(userObj);
 
         console.log("userObj disconnect",userObj)
-        // Update the status in redis
-        // await redisClient.hSet('Users', userName, userObj);
+        // Update the status in db
         await updateUser(userName,userObj)
 
         const objectsOnDisconnect = await readUsers();

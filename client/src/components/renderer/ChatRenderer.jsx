@@ -12,7 +12,6 @@ import {
     recieverStore,
     userNameStore} from '../../store/store';
 // Common Functions
-import { redisIdToDateTimeConverter } from '../../common/dateConverter';
 import { uniqueDate } from '../../common/uniqueDate';
 
 function ChatRenderer() {
@@ -116,7 +115,8 @@ function ChatRenderer() {
                   <Fragment key={index}>
                     {dateArr.length === chatArray.length && dateArr[index] !== "" && (
                       <div className={`w-full h-auto text-gray-950 first:mt-2 message-middle`}>
-                        {dateArr[index].split('-')[2] + ' ' + dateArr[index].split('-')[1] + ' ' + dateArr[index].split('-')[0] }
+                        {dateArr[index]}
+                        {/* {dateArr[index].split('-')[2] + ' ' + dateArr[index].split('-')[1] + ' ' + dateArr[index].split('-')[0] } */}
                       </div>
                     )}
                     <div className={`w-full h-auto text-gray-950 first:mt-2

@@ -12,12 +12,6 @@ const { createServer } = require('node:http');
 // Import SocketIo server
 const { Server } = require("socket.io");
 
-// redisClient connection
-const redisClient = require('./redisClient');
-
-// Import common functions
-// const { usersGetter } = require('./common/usersGetter');
-
 // Import Controllers
 const { readPerosnalMessages } = require('./controller/messageReaderController');
 const { readGroupMessages } = require('./controller/groupMessageReaderController');
@@ -73,8 +67,7 @@ ioInstance.on('connection', async(socket) => {
 
       console.log("username",userName);
 
-      // To add unique users to the cache
-      // await redisClient.hSet('Users', userName, userObj);
+      // To add unique users to the db
       await updateUser(userName, userObj);
 
       const parsedObjects = await readUsers();
@@ -139,7 +132,6 @@ ioInstance.on('connection', async(socket) => {
   
           const groupMessageObj = await createGroupMessage(group_message_obj);
           console.log("groupMessageObj",groupMessageObj);
-          // redisClient.xAdd('GroupMessages','*',group_message_obj);
         });
         // send_file
         socket.on("send_group_file", async(file) => {
@@ -160,9 +152,6 @@ mongoose.connect(process.env.MONGO_DB_CONN_STRING)
   .catch(err => console.error("Error while connecting to Mongodb: ",err));
 
 app.get('/', async(req, res) => {
-  // const result = await redisClient.xRange('GroupMessages', '-', '+');
-  // const existingUser = await redisClient.hGetAll('Users');
-
   const result = await readGroupMessage();
   const existingUser = await readUsers();
   // console.log("existingUser",existingUser)

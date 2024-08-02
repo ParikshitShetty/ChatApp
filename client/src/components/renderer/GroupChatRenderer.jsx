@@ -13,7 +13,6 @@ import {
     recieverStore,
     userNameStore} from '../../store/store';
 // Common functions
-import { redisIdToDateTimeConverter } from '../../common/dateConverter';
 import { uniqueDate } from '../../common/uniqueDate';
 
 function GroupChatRenderer() {
@@ -95,7 +94,8 @@ function GroupChatRenderer() {
                 <Fragment key={index}>
                   { dateArr.length > 0 && dateArr[index] && dateArr[index] !== "" && (
                       <div className={`w-full h-auto text-gray-950 first:mt-2 message-middle`}>
-                        {dateArr[index].split('-')[2] + ' ' + dateArr[index].split('-')[1] + ' ' + dateArr[index].split('-')[0] }
+                        {dateArr[index]}
+                        {/* {dateArr[index].split('-')[2] + ' ' + dateArr[index].split('-')[1] + ' ' + dateArr[index].split('-')[0] } */}
                       </div>
                     )}
                   <span key={index} className={`text-gray-950 ${userName ===  message.sender ? `message-orange` : `message-blue`} ${index === 0 ? `mt-2` : `` }`}>

@@ -13,7 +13,6 @@ import {
   senderIdStore, 
   userNameStore} from '../../store/store';
 // Common functions
-import { dateToRedisId } from '../../common/dateConverter';
 import { formatFileSize } from '../../common/fileSizeCalculator';
 
 function ChatForm() {
