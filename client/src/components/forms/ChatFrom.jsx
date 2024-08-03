@@ -13,7 +13,6 @@ import {
   senderIdStore, 
   userNameStore} from '../../store/store';
 // Common functions
-import { dateToRedisId } from '../../common/dateConverter';
 import { formatFileSize } from '../../common/fileSizeCalculator';
 
 function ChatForm() {
@@ -61,8 +60,8 @@ function ChatForm() {
       } 
 
       const obj = {
-        id:Date.now(),
-        message:messgeObj
+        timeStamp:new Date().toISOString(),
+        ...messgeObj
       }
       setChatArray((prev)=>{
         return [...prev,obj]
@@ -130,8 +129,6 @@ function ChatForm() {
     }
   },[reciever])
 
-  console.log(import.meta.env.VITE_SOCKET_SEND_FILE)
-  if(file?.name) console.log("file",file);
   return (
     <>
       <div className='w-[70%] h-[13vh] flex justify-end items-end relative'>

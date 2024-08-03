@@ -12,8 +12,7 @@ import {
     recieverStore,
     userNameStore} from '../../store/store';
 // Common Functions
-import { redisIdToDateTimeConverter } from '../../common/dateConverter';
-import { uniqueDate } from '../../common/uniqueDate';
+import { uniqueDate, dateFormatter } from '../../common/uniqueDate';
 
 function ChatRenderer() {
     const [chatArray,setChatArray] = useAtom(chatArrayStore);
@@ -75,8 +74,8 @@ function ChatRenderer() {
             socket.on(recieveMessage,(data) => {
               // console.log("receive_message data",data);
               const obj = {
-                id:Date.now(),
-                message:data
+                timeStamp:new Date().toISOString(),
+                ...data
               }
               setChatArray((prev)=>{
                   return [...prev,obj]
@@ -116,26 +115,26 @@ function ChatRenderer() {
                   <Fragment key={index}>
                     {dateArr.length === chatArray.length && dateArr[index] !== "" && (
                       <div className={`w-full h-auto text-gray-950 first:mt-2 message-middle`}>
-                        {dateArr[index].split('-')[2] + ' ' + dateArr[index].split('-')[1] + ' ' + dateArr[index].split('-')[0] }
+                        {dateArr[index]}
                       </div>
                     )}
                     <div className={`w-full h-auto text-gray-950 first:mt-2
-                      ${reciever.userName ===  message.message.recieverUserName ? `message-orange` : `message-blue`}`}>
+                      ${reciever.userName ===  message.recieverUserName ? `message-orange` : `message-blue`}`}>
                         <p className={`font-semibold mb-1 first-letter:uppercase`}>
-                          {userName === message.message.senderUserName ? `You` : message.message.senderUserName}
+                          {userName === message.senderUserName ? `You` : message.senderUserName}
                         </p>
-                        {message.message.content}
-                        {message.message?.path && (
+                        {message.content}
+                        {message?.path && (
                           <>
                             <div className='flex justify-between items-center py-1 '>
-                              <p className='first-letter:uppercase'>{fileNameSplitter(message.message?.path)}</p>
-                              <MdDownloadForOffline onClick={() => downloadFile(message.message?.path)}
+                              <p className='first-letter:uppercase'>{fileNameSplitter(message?.path)}</p>
+                              <MdDownloadForOffline onClick={() => downloadFile(message?.path)}
                               className='w-6 h-6 cursor-pointer' />
                             </div>
                           </>
                         )}
                         <p className={`mt-1 text-end`}>
-                          {redisIdToDateTimeConverter(message.id,true)}
+                          {dateFormatter(message.timeStamp)}
                         </p>
                     </div>
                     

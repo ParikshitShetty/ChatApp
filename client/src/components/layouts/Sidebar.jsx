@@ -171,7 +171,7 @@ function Sidebar() {
                         <>
                            <div className="flow-root">
                                 <ul role="list" className="">
-                                {[...connectedUsersList].filter(user => user.chatID !== sender).map((users,index)=>( 
+                                {[...connectedUsersList].filter(user => user.userName !== userName).map((users,index)=>( 
                                     <Fragment key={index}>
                                         <UserListItem key={index} users={users} getOldMessages={getOldMessages}/>
                                     </Fragment>

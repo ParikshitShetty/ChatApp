@@ -1,5 +1,4 @@
-// redisClient connection
-const redisClient = require('../redisClient');
+const { createMessage } = require('../utils/messageCollectionHandler')
 
 const personalMessageHanlder = async(socket,message,userName) =>{
     try {
@@ -12,16 +11,16 @@ const personalMessageHanlder = async(socket,message,userName) =>{
         // Send message to only that particular room/user
         socket.in(messageObj.receiverChatID).emit('receive_message',messageObj)
     
-        const redisMsgObj = {
+        const MsgObj = {
           senderUserName : userName,
           recieverUserName : message.recieverUserName,
           content : message.content,
-          path: message?.path ? message?.path : null
+          path: message?.path ?? null
         }
-        // console.log("redisMsgObj",redisMsgObj)
+        // console.log("MsgObj",MsgObj)
     
-        // Add the message in redis cache
-        const adder = await redisClient.xAdd('Messages', '*', redisMsgObj);
+        // Add the message in db
+        const adder = createMessage(MsgObj)
         return adder;
     } catch (error) {
         console.error("Error while one-on-one Messaging: ",error);
