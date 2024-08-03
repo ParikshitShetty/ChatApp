@@ -12,7 +12,7 @@ import {
     recieverStore,
     userNameStore} from '../../store/store';
 // Common Functions
-import { uniqueDate } from '../../common/uniqueDate';
+import { uniqueDate, dateFormatter } from '../../common/uniqueDate';
 
 function ChatRenderer() {
     const [chatArray,setChatArray] = useAtom(chatArrayStore);
@@ -116,7 +116,6 @@ function ChatRenderer() {
                     {dateArr.length === chatArray.length && dateArr[index] !== "" && (
                       <div className={`w-full h-auto text-gray-950 first:mt-2 message-middle`}>
                         {dateArr[index]}
-                        {/* {dateArr[index].split('-')[2] + ' ' + dateArr[index].split('-')[1] + ' ' + dateArr[index].split('-')[0] } */}
                       </div>
                     )}
                     <div className={`w-full h-auto text-gray-950 first:mt-2
@@ -135,8 +134,7 @@ function ChatRenderer() {
                           </>
                         )}
                         <p className={`mt-1 text-end`}>
-                          {/* {redisIdToDateTimeConverter(message.timeStamp,true)} */}
-                          {message.timeStamp}
+                          {dateFormatter(message.timeStamp)}
                         </p>
                     </div>
                     

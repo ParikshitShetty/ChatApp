@@ -13,7 +13,7 @@ import {
     recieverStore,
     userNameStore} from '../../store/store';
 // Common functions
-import { uniqueDate } from '../../common/uniqueDate';
+import { uniqueDate, dateFormatter } from '../../common/uniqueDate';
 
 function GroupChatRenderer() {
     const [chatArray,setChatArray] = useAtom(groupchatArrayStore);
@@ -78,7 +78,7 @@ function GroupChatRenderer() {
       const array = uniqueDate(chatArray);
       setDateArr(array);
     },[chatArray])
-    console.log("dateArr",dateArr);
+    console.log("chatArray",chatArray);
   return (
     <>
         <div className='w-[90%] max-h-[77vh] h-[80vh] overflow-y-scroll flex flex-col justify-start items-start' ref={messagesEndRef}>
@@ -95,7 +95,6 @@ function GroupChatRenderer() {
                   { dateArr.length > 0 && dateArr[index] && dateArr[index] !== "" && (
                       <div className={`w-full h-auto text-gray-950 first:mt-2 message-middle`}>
                         {dateArr[index]}
-                        {/* {dateArr[index].split('-')[2] + ' ' + dateArr[index].split('-')[1] + ' ' + dateArr[index].split('-')[0] } */}
                       </div>
                     )}
                   <span key={index} className={`text-gray-950 ${userName ===  message.sender ? `message-orange` : `message-blue`} ${index === 0 ? `mt-2` : `` }`}>
@@ -103,15 +102,10 @@ function GroupChatRenderer() {
                       {userName === message.sender ? `You` : message.sender}
                     </p>
                     {message.content}
-                  </span>
-                  <div className={`w-full h-auto text-gray-950 first:mt-2
-                    ${userName ===  message.sender ? `message-orange` : `message-blue`} ${index === 0 ? `mt-2` : `` }`}>
-                      {message.content}
-                      <p className={`mt-1 ${reciever.userName ===  message.recieverUserName ? `text-end` : `text-start`}`}>
-                        {/* {redisIdToDateTimeConverter(message.timeStamp,true)} */}
-                        {message.timeStamp}
+                    <p className={`mt-1 ${reciever.userName ===  message.recieverUserName ? `text-end` : `text-start`}`}>
+                        {dateFormatter(message.timeStamp)}
                       </p>
-                  </div>
+                  </span>
                 </Fragment>
               ))}    
             </>

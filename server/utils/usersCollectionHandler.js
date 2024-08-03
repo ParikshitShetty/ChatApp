@@ -43,16 +43,16 @@ const updateUser = async(userName,newData) => {
         console.log("userName",userName,"newData",newData)
         const usersData = await userModel.findOne({ userName }).exec();
   
-        const parsedObject = JSON.parse(newData);
+        // const parsedObject = JSON.parse(newData);
         // console.log("parsedObject",parsedObject)
         if (usersData && usersData.userName === userName){
             // console.log("Updating user")
-            const updatedUser = await userModel.updateOne(usersData,parsedObject).exec();
+            const updatedUser = await userModel.updateOne(usersData,newData).exec();
             console.log("updatedUser",updatedUser)
             return updatedUser;
         } 
         console.log("user doesn't exist");
-        const createdUser = await createUser(parsedObject);
+        const createdUser = await createUser(newData);
         return createdUser;
     } catch (error) {
         console.error("Error while updating user:",error);

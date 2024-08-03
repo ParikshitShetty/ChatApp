@@ -5,7 +5,7 @@ export function uniqueDate(chatArray) {
     for (let index = 0; index < chatArray.length; index++) {
       const element = chatArray[index];
       // 2024-08-01T17:26:06.700Z
-      const date = element.timeStamp.split('T1')[0];
+      const date = element.timeStamp.split('T')[0];
       // 2024-08-01
       const dateArray = date.split('-');
 
@@ -21,4 +21,13 @@ export function uniqueDate(chatArray) {
       array.push('');
     }
     return array
+}
+
+export function dateFormatter(mongoDate) {
+  const utcDate = new Date(mongoDate); // Replace with your UTC date string
+
+  // Convert the UTC date to IST
+  const istDate = utcDate.toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
+  const time = istDate.split(',')[1];
+  return time;
 }

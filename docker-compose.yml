@@ -1,11 +1,13 @@
 version: '3.8'
 
 services:
-  redis-server:
-    image: redis
+  mongo-server:
+    image: mongo
+    ports:
+      - "27017:27017"
+    restart: on-failure
     volumes:
-      - C:/redis-db-data:/data
-      # - C:/Users/parik/projects/chatApp/dump.rdb:/data/dump.rdb
+      - C:/mongo-chat-data/data/db:/data/db
   
   chat_server:
     container_name: chat_server
@@ -15,7 +17,7 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      - redis-server
+      - mongo-server
     restart: unless-stopped
     extra_hosts:
       - "host.docker.internal:host-gateway"
