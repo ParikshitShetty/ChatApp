@@ -63,7 +63,7 @@ function Chat() {
     // console.log("userName",userName)
   return (
     <>
-      <div className='h-full w-full flex justify-between items-center '>
+      <div className='h-full w-full flex justify-between items-center'>
         <Sidebar />
         <div className='h-full w-[73%] flex flex-col justify-center items-center'>
           <Navbar />

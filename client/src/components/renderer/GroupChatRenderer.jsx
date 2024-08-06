@@ -3,6 +3,8 @@ import { useAtom, useAtomValue } from 'jotai';
 import toast from 'react-hot-toast';
 // Utils
 import { initializeSocket } from '../../utils/socket'
+// Components
+import Download from '../ui/Download';
 import Loader from '../ui/Loader';
 // Global States
 import { 
@@ -102,6 +104,9 @@ function GroupChatRenderer() {
                       {userName === message.sender ? `You` : message.sender}
                     </p>
                     {message.content}
+                    {message?.path && (
+                      <Download message={message} />
+                    )}
                     <p className={`mt-1 ${reciever.userName ===  message.recieverUserName ? `text-end` : `text-start`}`}>
                         {dateFormatter(message.timeStamp)}
                       </p>

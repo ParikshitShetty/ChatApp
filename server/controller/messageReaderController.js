@@ -9,7 +9,7 @@ const readPerosnalMessages = async(req, res) => {
       const filteredMessages =  messages.filter(message => ((message.senderUserName === sender && message.recieverUserName === reciever) || (message.senderUserName === reciever && message.recieverUserName === sender)) 
       );
 
-      console.log("messages",messages)
+      // console.log("messages",messages)
 
       res.json({ filteredMessages });
     } catch (error) {

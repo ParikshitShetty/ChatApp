@@ -6,3 +6,9 @@ export function formatFileSize(bytes,decimalPoint) {
     i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
   }
+
+export function fileNameSplitter(filename) {
+  const array = String(filename).split('/');
+  const finalName = array[(array.length - 1)];
+  return finalName;
+}

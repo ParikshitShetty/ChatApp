@@ -20,7 +20,9 @@ const { downloadFile } = require('./controller/downloadFile');
 // Import SocketIo Handlers
 const disconnectHandler = require('./socketIoHandlers/disconnectHandler');
 const personalMessageHanlder = require('./socketIoHandlers/personalMessageHandler');
+const groupMessageHandler = require('./socketIoHandlers/groupMessageHandler');
 const uploadHandler = require('./socketIoHandlers/uploadHandler');
+const groupInitHandler = require('./socketIoHandlers/groupInitHandler');
 
 // Db handlers
 const { readUsers, updateUser } = require('./utils/usersCollectionHandler');
@@ -65,7 +67,7 @@ ioInstance.on('connection', async(socket) => {
         status: 'online'
       });
 
-      console.log("username",userName);
+      // console.log("username",userName);
 
       // To add unique users to the db
       await updateUser(userName, userObj);
@@ -97,8 +99,7 @@ ioInstance.on('connection', async(socket) => {
       // Send individual files with messages
       socket.on("send_file", async(file) => {
         const messageObject = await uploadHandler(file);
-        const messageSender = await personalMessageHanlder(socket,messageObject,userName);
-        console.log("messageSender messge id",messageSender);
+        await personalMessageHanlder(socket,messageObject,userName);
       });
 
       let senderGlobal = null;
@@ -106,38 +107,16 @@ ioInstance.on('connection', async(socket) => {
       socket.on('join_group', async( message ) => {
         // console.log("message",message);
     
-        const room = message.room;
-        const sender = message.sender;
-
-        socket.join(room);
-
-        const returnObj  = {
-          sender : sender,
-          message_others : `${sender} has joined!`,
-          message_self : `Welocome to ${room}`
-        }
-
-        // Send message to all connected in the room
-        if (senderGlobal === null){
-          ioInstance.in(room).emit("receive_welcome_message", returnObj);
-          senderGlobal = sender;
-        }
+        const initialised = groupInitHandler({ message, ioInstance, socket, senderGlobal});
+        if (initialised) senderGlobal = initialised;
       
         socket.on('send_group_message',async( group_message_obj ) => {
-          console.log("group_message_obj",group_message_obj);
-
-          socket.emit("receive_group_message", group_message_obj);
-          // Broadcast to whoever is in the channel
-          socket.broadcast.to(group_message_obj.room).emit("receive_group_message", group_message_obj);
-  
-          const groupMessageObj = await createGroupMessage(group_message_obj);
-          console.log("groupMessageObj",groupMessageObj);
+          await groupMessageHandler(socket, group_message_obj);
         });
         // send_file
         socket.on("send_group_file", async(file) => {
           const messageObject = await uploadHandler(file);
-          const messageSender = await personalMessageHanlder(socket,messageObject,userName);
-          console.log("messageSender messge id",messageSender);
+          await groupMessageHandler(socket, messageObject);
         });
       });
 

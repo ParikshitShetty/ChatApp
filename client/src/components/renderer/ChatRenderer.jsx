@@ -1,9 +1,10 @@
 import React, { Fragment, useEffect, useRef, useState } from 'react'
 import { useAtom, useAtomValue } from 'jotai';
-import { MdDownloadForOffline } from "react-icons/md";
 // Utils
 import { initializeSocket } from '../../utils/socket';
+// Compoentns
 import Loader from '../ui/Loader';
+import Download from '../ui/Download';
 // Global States
 import { 
     chatArrayStore, 
@@ -28,43 +29,6 @@ function ChatRenderer() {
     const ref = useRef(true);
 
     const messagesEndRef = useRef(null);
-
-    const fileNameSplitter = (filename) => {
-      const array = String(filename).split('/');
-      const finalName = array[(array.length - 1)];
-      return finalName;
-    }
-
-    const downloadFile = async(file) => {
-      try {
-        const url = import.meta.env.VITE_DOWNLOAD_FILE;
-        const options = {
-          method: "POST", // *GET, POST, PUT, DELETE, etc.
-          mode: "cors", // no-cors, *cors, same-origin
-          cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
-          credentials: "same-origin", //include is used to set cookies
-          headers: {
-            "Content-Type": "application/json",
-          },
-          redirect: "follow",
-          referrerPolicy: "no-referrer", 
-          body: JSON.stringify({file})
-        };
-        const response = await fetch(url,options);
-        const responseBlob = await response.blob();
-
-        const downloadUrl = window.URL.createObjectURL(responseBlob);
-        const a = document.createElement('a');
-        a.style.display = 'none';
-        a.href = downloadUrl;
-        a.download = file.split('/').pop(); // Extract the file name
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(downloadUrl);
-      } catch (error) {
-        console.error("Error while downloading file: ",error)
-      }
-    }
 
     useEffect(()=>{
         const socket = initializeSocket(userName);
@@ -126,11 +90,7 @@ function ChatRenderer() {
                         {message.content}
                         {message?.path && (
                           <>
-                            <div className='flex justify-between items-center py-1 '>
-                              <p className='first-letter:uppercase'>{fileNameSplitter(message?.path)}</p>
-                              <MdDownloadForOffline onClick={() => downloadFile(message?.path)}
-                              className='w-6 h-6 cursor-pointer' />
-                            </div>
+                            <Download message={message} />
                           </>
                         )}
                         <p className={`mt-1 text-end`}>

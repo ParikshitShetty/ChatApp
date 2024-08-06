@@ -1,6 +1,6 @@
-import React, { useEffect, useMemo, useReducer, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { IoPaperPlane } from "react-icons/io5";
-import { useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { FiPaperclip } from "react-icons/fi";
 // Utils
 import { initializeSocket } from '../../utils/socket'
@@ -12,8 +12,6 @@ import {
   recieverStore,
   senderIdStore, 
   userNameStore} from '../../store/store';
-// Common functions
-import { formatFileSize } from '../../common/fileSizeCalculator';
 
 function ChatForm() {
   const [message,setMessage] = useState('');
@@ -45,7 +43,7 @@ function ChatForm() {
 
       // console.log("sender",sender)
 
-      const messgeObj = { 
+      const messageObj = { 
         receiverChatID:reciever.chatID, 
         senderChatID:sender, 
         content:message,
@@ -53,15 +51,15 @@ function ChatForm() {
         senderUserName:userName
       }
       // Send file
-      if(file?.name) uploadFile(messgeObj);
+      if(file?.name) uploadFile(messageObj);
       else {
         const sendMessage = import.meta.env.VITE_SOCKET_SEND_MESSAGE;
-        socket.emit(sendMessage,messgeObj);
+        socket.emit(sendMessage,messageObj);
       } 
 
       const obj = {
         timeStamp:new Date().toISOString(),
-        ...messgeObj
+        ...messageObj
       }
       setChatArray((prev)=>{
         return [...prev,obj]
@@ -89,8 +87,11 @@ function ChatForm() {
       //   message:messageObj
       // }
       // socket.emit("join_group", messageObj);
-      const sendGroupMessage = import.meta.env.VITE_SOCKET_SEND_GROUP_MESSAGE;
-      socket.emit(sendGroupMessage,messageObj)
+      if(file?.name) uploadFile(messageObj);
+      else{
+        const sendGroupMessage = import.meta.env.VITE_SOCKET_SEND_GROUP_MESSAGE;
+        socket.emit(sendGroupMessage,messageObj)
+      }
 
       setMessage('');
     } catch (error) {
@@ -116,7 +117,7 @@ function ChatForm() {
     const socket = initializeSocket(userName);
     
     const object = { name:file.name, type:file.type,file:file, messgeObj:messgeObj};
-    const sendFileEvent = import.meta.env.VITE_SOCKET_SEND_FILE;
+    const sendFileEvent = groupChatMode ? import.meta.env.VITE_SOCKET_SEND_GROUP_FILE : import.meta.env.VITE_SOCKET_SEND_FILE;
     socket.emit(sendFileEvent, object);
     setFile({});
 
@@ -141,7 +142,7 @@ function ChatForm() {
           {file?.name &&
             <p className='absolute top-1 left-[8%]'> file: {file?.name}</p>
           }
-          <input type="text" id="message" placeholder="hey" required
+          <input type="text" id="message" placeholder="hey"
           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-custom-pitch-dark  dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-black" 
           ref={inputRef}
           value={message} onChange={changeHandler} onKeyDown={(e) => {

@@ -12,7 +12,7 @@ const readUsers = async() => {
 
 const createUser = async(userData) => {
     try {
-        console.log("createUser userData",userData)
+        // console.log("createUser userData",userData)
 
         const parsedObject = JSON.parse(userData);
         // Check the type of userData
@@ -48,7 +48,7 @@ const updateUser = async(userName,newData) => {
         if (usersData && usersData.userName === userName){
             // console.log("Updating user")
             const updatedUser = await userModel.updateOne(usersData,newData).exec();
-            console.log("updatedUser",updatedUser)
+            // console.log("updatedUser",updatedUser)
             return updatedUser;
         } 
         console.log("user doesn't exist");
