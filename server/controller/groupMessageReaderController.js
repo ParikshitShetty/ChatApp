@@ -1,13 +1,17 @@
+const { fileEncryptor } = require('../utils/fileEncryptor');
 const { readGroupMessage } = require('../utils/groupMessageCollectionHandler');
 
 const readGroupMessages = async(req, res) => {
     const { reciever, sender } = req.body;
     try {
-      const messages = await readGroupMessage();
+      let messages = await readGroupMessage();
 
-      res.json({ messages});
+      messages = [...messages].map( message => fileEncryptor({ message }) );
+
+      res.json({ messages });
     } catch (error) {
-      res.json({message:"Error while reading messages from redis",error:error})
+      console.log("Error while reading group messages from mongofb: ",error)
+      res.json({message:"Error while reading group messages from mongofb",error:error})
     }
 };
 

@@ -66,13 +66,13 @@ You can run this app either using Docker or natively
     Docker (optional for containerized deployment)
 
 # Login Page
-![login](https://github.com/ParikshitShetty/ChatApp/blob/main/client/public/img/login.png?raw=true)
+![login](https://github.com/ParikshitShetty/ChatApp/blob/main/client/public/img/login.jpg?raw=true)
 
 # Home Page
-![home](https://github.com/ParikshitShetty/ChatApp/blob/main/client/public/img/home.png?raw=true)
+![home](https://github.com/ParikshitShetty/ChatApp/blob/main/client/public/img/home.jpg?raw=true)
 
 # Chat
-![chat](https://github.com/ParikshitShetty/ChatApp/blob/main/client/public/img/chat.png?raw=true)
+![chat](https://github.com/ParikshitShetty/ChatApp/blob/main/client/public/img/chat.jpg?raw=true)
 
 # Group Chat
-![groupchat](https://github.com/ParikshitShetty/ChatApp/blob/main/client/public/img/groupchat.png?raw=true)
+![groupchat](https://github.com/ParikshitShetty/ChatApp/blob/main/client/public/img/groupchat.jpg?raw=true)

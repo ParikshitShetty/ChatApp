@@ -5,11 +5,11 @@ import { initializeSocket } from '../../utils/socket';
 // Compoentns
 import Loader from '../ui/Loader';
 import Download from '../ui/Download';
+import FileRenderer from './FileRenderer';
 // Global States
 import { 
     chatArrayStore, 
     chatLoaderState, 
-    GroupChatModeState, 
     recieverStore,
     userNameStore} from '../../store/store';
 // Common Functions
@@ -63,7 +63,7 @@ function ChatRenderer() {
       setDateArr(array);
     },[chatArray])
     // console.log("reciever",reciever)
-    console.log("chatArray",chatArray)
+    // console.log("chatArray",chatArray)
   return (
     <>
         <div className=' w-[90%] h-[77vh] max-h-[80vh] overflow-y-scroll flex flex-col justify-start items-start' ref={messagesEndRef}>
@@ -88,10 +88,13 @@ function ChatRenderer() {
                           {userName === message.senderUserName ? `You` : message.senderUserName}
                         </p>
                         {message.content}
-                        {message?.path && (
+                        { message?.path && (
                           <>
                             <Download message={message} />
                           </>
+                        )}
+                        { message.image && (
+                          <FileRenderer message={message} index={index} />
                         )}
                         <p className={`mt-1 text-end`}>
                           {dateFormatter(message.timeStamp)}
