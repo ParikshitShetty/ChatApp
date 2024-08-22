@@ -28,7 +28,7 @@ function ChatForm() {
 
   const group = useAtomValue(GroupState);
 
-  const [file, setFile] = useState({});
+  const [file, setFile] = useState([]);
 
   const inputRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -37,7 +37,6 @@ function ChatForm() {
 
   const formSubmit = (event) =>{
     event.preventDefault();
-    if (!message) return ;
     try {
       const socket = initializeSocket(userName);
 
@@ -51,7 +50,7 @@ function ChatForm() {
         senderUserName:userName
       }
       // Send file
-      if(file?.name) uploadFile(messageObj);
+      if(file?.length > 0) uploadFile(messageObj);
       else {
         const sendMessage = import.meta.env.VITE_SOCKET_SEND_MESSAGE;
         socket.emit(sendMessage,messageObj);
@@ -73,7 +72,6 @@ function ChatForm() {
 
   const groupFormSubmit = (event) =>{
     event.preventDefault();
-    if (!message) return ;
     try {
       const socket = initializeSocket(userName);
 
@@ -87,7 +85,7 @@ function ChatForm() {
       //   message:messageObj
       // }
       // socket.emit("join_group", messageObj);
-      if(file?.name) uploadFile(messageObj);
+      if(file?.length > 0) uploadFile(messageObj);
       else{
         const sendGroupMessage = import.meta.env.VITE_SOCKET_SEND_GROUP_MESSAGE;
         socket.emit(sendGroupMessage,messageObj)
@@ -100,8 +98,9 @@ function ChatForm() {
   }
 
   const fileChangeHandle = (event) => {
-    const InputFile = event.target.files[0];
-    setFile(InputFile);
+    const InputFiles = event.target.files;
+    console.log("filessssssssssssss",InputFiles);
+    setFile(InputFiles);
   }
 
   const handleClick = () => {
@@ -110,16 +109,13 @@ function ChatForm() {
   }
 
   const uploadFile = (messgeObj) => {
-    if(!file){
-      console.log('file is empty');
-      return 'file is empty';
-    } 
+    if(file.length === 0) return console.log('file is empty');
     const socket = initializeSocket(userName);
     
-    const object = { name:file.name, type:file.type,file:file, messgeObj:messgeObj};
+    const object = { file, messgeObj };
     const sendFileEvent = groupChatMode ? import.meta.env.VITE_SOCKET_SEND_GROUP_FILE : import.meta.env.VITE_SOCKET_SEND_FILE;
     socket.emit(sendFileEvent, object);
-    setFile({});
+    setFile([]);
 
     // console.log("size",formatFileSize(file.size));
   }
@@ -137,11 +133,12 @@ function ChatForm() {
           <div className='w-20'>
             <FiPaperclip className='w-7 h-7 ml-2 cursor-pointer' onClick={handleClick} />
               <input type='file' id='fileInput' onChange={fileChangeHandle}
+               multiple
                className='hidden'/>
           </div>
-          {file?.name &&
-            <p className='absolute top-1 left-[8%]'> file: {file?.name}</p>
-          }
+          {/* {file?.length > 0 && file.map((fileName,index) =>(
+           <p key={index} className='absolute top-1 left-[8%]'> file: {fileName?.name}</p>
+          ))} */}
           <input type="text" id="message" placeholder="hey"
           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-custom-pitch-dark  dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-black" 
           ref={inputRef}

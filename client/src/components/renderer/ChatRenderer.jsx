@@ -26,6 +26,8 @@ function ChatRenderer() {
 
     const chatLoader = useAtomValue(chatLoaderState);
 
+    const [vedioDownloaded,setVedioDownloaded] = useState(false);
+
     const ref = useRef(true);
 
     const messagesEndRef = useRef(null);
@@ -96,6 +98,12 @@ function ChatRenderer() {
                         { message.image && (
                           <FileRenderer message={message} index={index} />
                         )}
+                        {/* { message?.path && String(message?.path).includes('mp4') && (
+                          <video width="320" height="240" controls>
+                            <source src="/mov_bbb.mp4" type="video/mp4"/>
+                            Your browser does not support the video tag.
+                          </video> 
+                        )} */}
                         <p className={`mt-1 text-end`}>
                           {dateFormatter(message.timeStamp)}
                         </p>

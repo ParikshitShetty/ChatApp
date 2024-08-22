@@ -1,6 +1,7 @@
 const fs = require('fs');
 
 const uploadHandler = async(file) => {
+    console.log("file",typeof(file.file))
     try {
         const StringArray = String(file.type).split('/');
         const name = file.name;
