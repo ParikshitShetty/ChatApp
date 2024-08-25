@@ -7,8 +7,6 @@ const personalMessageHanlder = async(socket,message,userName) =>{
             senderUserName : message.senderUserName,
             content : message.content
         }
-        console.log("argumnets",message,userName)
-        console.log("messageObj",messageObj)
 
         // console.log("socket",socket)
         // Send message to only that particular room/user
@@ -21,7 +19,7 @@ const personalMessageHanlder = async(socket,message,userName) =>{
                 content : message.content,
                 path: message?.path ?? null
             }
-            console.log("MsgObj",MsgObj)
+            // console.log("MsgObj",MsgObj)
         
             // Add the message in db
             const adder = createMessage(MsgObj)
