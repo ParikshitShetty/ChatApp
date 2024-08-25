@@ -59,7 +59,7 @@ ioInstance.on('connection', async(socket) => {
       const chatID = socket.id;
       const userName = socket.handshake.query.userName;
 
-      console.log(`A user connected with id ${chatID}`);
+      console.log(`A user connected with id ${chatID} and userName ${userName}`);
       // Add the user to the array
       let userObj = JSON.stringify({
         chatID : chatID,
@@ -75,7 +75,7 @@ ioInstance.on('connection', async(socket) => {
       const parsedObjects = await readUsers();
       // console.log("parsedObjects",parsedObjects)
 
-      socket.join(chatID);
+      socket.join(userName);
 
       const parsedUser = JSON.parse(userObj)
       // Send the current users userId
@@ -85,7 +85,7 @@ ioInstance.on('connection', async(socket) => {
 
       // Actions on disconnecting
       socket.on('disconnect', async() => {
-        const dis = await disconnectHandler(socket,ioInstance,chatID,userObj,userName);
+        const dis = await disconnectHandler(socket,ioInstance,userName,userObj,userName);
         console.log("dis",dis);
       });
 
@@ -93,7 +93,7 @@ ioInstance.on('connection', async(socket) => {
       socket.on('send_message', async( message ) => {
         // console.log("message",message)
         const messageSender = await personalMessageHanlder(socket,message,userName);
-        console.log("messageSender messge id",messageSender);
+        // console.log("messageSender messge id",messageSender);
       });
 
       // Send individual files with messages

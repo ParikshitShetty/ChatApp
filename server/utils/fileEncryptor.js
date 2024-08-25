@@ -3,6 +3,8 @@ const fs = require('fs')
 const fileEncryptor = ({ message }) => {
     try {
         if (message.path && (message.path.endsWith('.png') || message.path.endsWith('.jpg'))) {
+            if (!fs.existsSync(message.path)) return message;
+
             const image = fs.readFileSync(message.path,'base64');
   
             // JSON.parse() Method

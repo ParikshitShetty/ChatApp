@@ -28,14 +28,14 @@ function ChatRenderer() {
 
     const [vedioDownloaded,setVedioDownloaded] = useState(false);
 
-    const ref = useRef(true);
+    const renderRef = useRef(true);
 
     const messagesEndRef = useRef(null);
 
     useEffect(()=>{
         const socket = initializeSocket(userName);
 
-        if (ref.current) {
+        if (renderRef.current) {
             const recieveMessage = import.meta.env.VITE_SOCKET_RECEIVE_MESSAGE;
             socket.on(recieveMessage,(data) => {
               // console.log("receive_message data",data);
@@ -47,10 +47,10 @@ function ChatRenderer() {
                   return [...prev,obj]
               });
             });
-            ref.current = false;
+            renderRef.current = false;
         }
         return () =>{
-          if (ref.current) {
+          if (renderRef.current) {
             const recieveMessage = import.meta.env.VITE_SOCKET_RECEIVE_MESSAGE;
             socket.removeListener(recieveMessage);
           }
@@ -65,7 +65,7 @@ function ChatRenderer() {
       setDateArr(array);
     },[chatArray])
     // console.log("reciever",reciever)
-    // console.log("chatArray",chatArray)
+    console.log("chatArray",chatArray)
   return (
     <>
         <div className=' w-[90%] h-[77vh] max-h-[80vh] overflow-y-scroll flex flex-col justify-start items-start' ref={messagesEndRef}>

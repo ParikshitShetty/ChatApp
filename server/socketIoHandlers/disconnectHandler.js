@@ -1,10 +1,10 @@
 // Db hanlders
 const { updateUser, readUsers } = require('../utils/usersCollectionHandler');
 
-const disconnectHandler = async(socket,ioInstance,chatID,userObj,userName) =>{
+const disconnectHandler = async(socket,ioInstance,userName,userObj) =>{
     try {
-        socket.leave(chatID);
-        console.log("Disconnected: ",chatID);
+        socket.leave(userName);
+        console.log("Disconnected: ",userName);
 
         userObj = JSON.parse(userObj);
         userObj.status = 'offline';

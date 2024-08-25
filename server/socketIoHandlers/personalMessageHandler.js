@@ -3,25 +3,44 @@ const { createMessage } = require('../utils/messageCollectionHandler')
 const personalMessageHanlder = async(socket,message,userName) =>{
     try {
         const messageObj = {
-            receiverChatID : message.receiverChatID,
-            senderChatID : message.senderChatID,
+            recieverUserName : message.recieverUserName,
+            senderUserName : message.senderUserName,
             content : message.content
         }
-        
+        console.log("argumnets",message,userName)
+        console.log("messageObj",messageObj)
+
+        // console.log("socket",socket)
         // Send message to only that particular room/user
-        socket.in(messageObj.receiverChatID).emit('receive_message',messageObj)
+        socket.in(messageObj.recieverUserName).emit('receive_message',messageObj)
     
-        const MsgObj = {
-          senderUserName : userName,
-          recieverUserName : message.recieverUserName,
-          content : message.content,
-          path: message?.path ?? null
+        if (!message?.path) {
+            const MsgObj = {
+                senderUserName : userName,
+                recieverUserName : message.recieverUserName,
+                content : message.content,
+                path: message?.path ?? null
+            }
+            console.log("MsgObj",MsgObj)
+        
+            // Add the message in db
+            const adder = createMessage(MsgObj)
+            return adder; 
         }
-        // console.log("MsgObj",MsgObj)
-    
-        // Add the message in db
-        const adder = createMessage(MsgObj)
-        return adder;
+        
+        for (let index = 0; index < message?.path.length; index++) {
+            const path = message?.path[index] ?? null;
+            const MsgObj = {
+                senderUserName : userName,
+                recieverUserName : message.recieverUserName,
+                content : message.content,
+                path: path 
+              }
+              // console.log("MsgObj",MsgObj)
+              // Add the message in db
+              const adder = createMessage(MsgObj);
+        }
+        return;
     } catch (error) {
         console.error("Error while one-on-one Messaging: ",error);
     }
