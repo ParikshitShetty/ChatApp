@@ -1,7 +1,7 @@
 const fs = require('fs');
 
 const uploadHandler = async(file) => {
-    // console.log("file",typeof(file.file))
+    // console.log("file",file)
     try {
         let paths = [];
         for (let index = 0; index < file.file.length; index++) {

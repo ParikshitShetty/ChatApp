@@ -1,3 +1,4 @@
+const { fileEncryptor } = require('../utils/fileEncryptor');
 const { createMessage } = require('../utils/messageCollectionHandler')
 
 const personalMessageHanlder = async(socket,message,userName) =>{
@@ -7,12 +8,20 @@ const personalMessageHanlder = async(socket,message,userName) =>{
             senderUserName : message.senderUserName,
             content : message.content
         }
+        if (message?.path) {
+            for (let index = 0; index < message?.path.length; index++) {
+                const element = message?.path[index];
+                const returnedMessage = await fileEncryptor({ message:{ path: element} });
 
-        // console.log("socket",socket)
-        // Send message to only that particular room/user
-        socket.in(messageObj.recieverUserName).emit('receive_message',messageObj)
-    
-        if (!message?.path) {
+                let finalMessage;
+                if (index === 0) finalMessage = { ...messageObj , ...returnedMessage};
+                else finalMessage = {...returnedMessage}
+                socket.in(messageObj.recieverUserName).emit('receive_message',finalMessage) 
+            }
+        } else {
+            // Send message to only that particular room/user
+            socket.in(messageObj.recieverUserName).emit('receive_message',messageObj)
+
             const MsgObj = {
                 senderUserName : userName,
                 recieverUserName : message.recieverUserName,

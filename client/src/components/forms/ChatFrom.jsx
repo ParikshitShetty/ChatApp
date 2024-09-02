@@ -60,6 +60,9 @@ function ChatForm() {
           image = await base64Encoder(element);
           path = element.name;
 
+          // delete messageObj.content
+          // console.log("messageObj",messageObj)
+          if(index !== 0 && messageObj.content) delete messageObj.content
           const obj = {
             timeStamp:new Date().toISOString(),
             image,
