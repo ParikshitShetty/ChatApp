@@ -6,12 +6,11 @@ import { initializeSocket } from '../../utils/socket'
 // Components
 import Download from '../ui/Download';
 import Loader from '../ui/Loader';
+import FileRenderer from './FileRenderer';
 // Global States
 import { 
     groupchatArrayStore, 
     groupChatLoaderState, 
-    GroupChatModeState, 
-    GroupState, 
     recieverStore,
     userNameStore} from '../../store/store';
 // Common functions
@@ -25,10 +24,6 @@ function GroupChatRenderer() {
     const reciever = useAtomValue(recieverStore);
 
     const userName = useAtomValue(userNameStore);
-
-    const groupChatMode = useAtomValue(GroupChatModeState);
-
-    const group = useAtomValue(GroupState);
 
     const groupChatLoader = useAtomValue(groupChatLoaderState);
 
@@ -104,8 +99,11 @@ function GroupChatRenderer() {
                       {userName === message.sender ? `You` : message.sender}
                     </p>
                     {message.content}
-                    {message?.path && (
+                    { message?.path && (
                       <Download message={message} />
+                    )}
+                    { message?.image && (
+                      <FileRenderer message={message} index={index} key={index} />
                     )}
                     <p className={`mt-1 ${reciever.userName ===  message.recieverUserName ? `text-end` : `text-start`}`}>
                         {dateFormatter(message.timeStamp)}

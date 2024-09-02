@@ -7,5 +7,16 @@ export default defineConfig({
   server:{
     host : '0.0.0.0',
     port : 5173
+  },
+  resolve: {
+    alias: {
+      "src": "/src",
+			"components": "/components",
+			"routes": "/routes",
+			"store": "/store",
+			"services": "/services",
+			"utils": "/utils",
+			"common": "/common",
+    }
   }
 })

@@ -8,6 +8,7 @@
     "start": "node server.js",
     "dev": "nodemon server.js",
     "client": "npm run dev --prefix ../client",
+    "app-prod": "concurrently \"node server.js\" \"npm run client\"",
     "app": "concurrently \"npm run dev\" \"npm run client\""
   },
   "author": "Parikshit Shetty",

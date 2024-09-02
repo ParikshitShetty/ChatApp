@@ -5,11 +5,11 @@ import { initializeSocket } from '../../utils/socket';
 // Compoentns
 import Loader from '../ui/Loader';
 import Download from '../ui/Download';
+import FileRenderer from './FileRenderer';
 // Global States
 import { 
     chatArrayStore, 
     chatLoaderState, 
-    GroupChatModeState, 
     recieverStore,
     userNameStore} from '../../store/store';
 // Common Functions
@@ -26,14 +26,16 @@ function ChatRenderer() {
 
     const chatLoader = useAtomValue(chatLoaderState);
 
-    const ref = useRef(true);
+    const [vedioDownloaded,setVedioDownloaded] = useState(false);
+
+    const renderRef = useRef(true);
 
     const messagesEndRef = useRef(null);
 
     useEffect(()=>{
         const socket = initializeSocket(userName);
 
-        if (ref.current) {
+        if (renderRef.current) {
             const recieveMessage = import.meta.env.VITE_SOCKET_RECEIVE_MESSAGE;
             socket.on(recieveMessage,(data) => {
               // console.log("receive_message data",data);
@@ -45,10 +47,10 @@ function ChatRenderer() {
                   return [...prev,obj]
               });
             });
-            ref.current = false;
+            renderRef.current = false;
         }
         return () =>{
-          if (ref.current) {
+          if (renderRef.current) {
             const recieveMessage = import.meta.env.VITE_SOCKET_RECEIVE_MESSAGE;
             socket.removeListener(recieveMessage);
           }
@@ -88,11 +90,20 @@ function ChatRenderer() {
                           {userName === message.senderUserName ? `You` : message.senderUserName}
                         </p>
                         {message.content}
-                        {message?.path && (
+                        { message?.path && (
                           <>
                             <Download message={message} />
                           </>
                         )}
+                        { message.image && (
+                          <FileRenderer message={message} index={index} />
+                        )}
+                        {/* { message?.path && String(message?.path).includes('mp4') && (
+                          <video width="320" height="240" controls>
+                            <source src="/mov_bbb.mp4" type="video/mp4"/>
+                            Your browser does not support the video tag.
+                          </video> 
+                        )} */}
                         <p className={`mt-1 text-end`}>
                           {dateFormatter(message.timeStamp)}
                         </p>

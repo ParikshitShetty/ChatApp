@@ -4,6 +4,7 @@ import { useAtomValue, useSetAtom } from 'jotai';
 import { FiPaperclip } from "react-icons/fi";
 // Utils
 import { initializeSocket } from '../../utils/socket'
+import { base64Encoder } from 'src/utils/fileEncoder';
 // Global States 
 import { 
   chatArrayStore,
@@ -28,16 +29,15 @@ function ChatForm() {
 
   const group = useAtomValue(GroupState);
 
-  const [file, setFile] = useState({});
+  const [file, setFile] = useState([]);
 
   const inputRef = useRef(null);
   const fileInputRef = useRef(null);
   // Input change handler
   const changeHandler = (event) => setMessage(event.target.value);
 
-  const formSubmit = (event) =>{
+  const formSubmit = async(event) => {
     event.preventDefault();
-    if (!message) return ;
     try {
       const socket = initializeSocket(userName);
 
@@ -50,22 +50,43 @@ function ChatForm() {
         recieverUserName:reciever.userName,
         senderUserName:userName
       }
+      let image, path = ''
       // Send file
-      if(file?.name) uploadFile(messageObj);
-      else {
+      if(file?.length > 0) {
+        const fileObj = uploadFile(messageObj);
+        
+        for (let index = 0; index < fileObj.length; index++) {
+          const element = fileObj[index];
+          image = await base64Encoder(element);
+          path = element.name;
+
+          // delete messageObj.content
+          // console.log("messageObj",messageObj)
+          if(index !== 0 && messageObj.content) delete messageObj.content
+          const obj = {
+            timeStamp:new Date().toISOString(),
+            image,
+            path,
+            ...messageObj
+          }
+          setChatArray((prev)=>{
+            return [...prev,obj]
+          });
+        }
+      } else {
         const sendMessage = import.meta.env.VITE_SOCKET_SEND_MESSAGE;
         socket.emit(sendMessage,messageObj);
-      } 
 
-      const obj = {
-        timeStamp:new Date().toISOString(),
-        ...messageObj
+        const obj = {
+          timeStamp:new Date().toISOString(),
+          ...messageObj
+        }
+        setChatArray((prev)=>{
+          return [...prev,obj]
+        });
       }
-      setChatArray((prev)=>{
-        return [...prev,obj]
-      });
 
-      setMessage('');
+      if (message !== '') setMessage('');
     } catch (error) {
       console.error("Error while sending message",error);
     }
@@ -73,7 +94,6 @@ function ChatForm() {
 
   const groupFormSubmit = (event) =>{
     event.preventDefault();
-    if (!message) return ;
     try {
       const socket = initializeSocket(userName);
 
@@ -87,7 +107,7 @@ function ChatForm() {
       //   message:messageObj
       // }
       // socket.emit("join_group", messageObj);
-      if(file?.name) uploadFile(messageObj);
+      if(file?.length > 0) uploadFile(messageObj);
       else{
         const sendGroupMessage = import.meta.env.VITE_SOCKET_SEND_GROUP_MESSAGE;
         socket.emit(sendGroupMessage,messageObj)
@@ -100,8 +120,11 @@ function ChatForm() {
   }
 
   const fileChangeHandle = (event) => {
-    const InputFile = event.target.files[0];
-    setFile(InputFile);
+    const InputFiles = Array.from(event.target.files);
+    const fileArray = InputFiles.map( file => {
+      return { fileBuf:file, name:file.name, type:file.type }
+    })
+    setFile(fileArray);
   }
 
   const handleClick = () => {
@@ -110,17 +133,14 @@ function ChatForm() {
   }
 
   const uploadFile = (messgeObj) => {
-    if(!file){
-      console.log('file is empty');
-      return 'file is empty';
-    } 
+    if(file.length === 0) return console.log('file is empty');
     const socket = initializeSocket(userName);
     
-    const object = { name:file.name, type:file.type,file:file, messgeObj:messgeObj};
+    const object = { file, messgeObj };
     const sendFileEvent = groupChatMode ? import.meta.env.VITE_SOCKET_SEND_GROUP_FILE : import.meta.env.VITE_SOCKET_SEND_FILE;
     socket.emit(sendFileEvent, object);
-    setFile({});
-
+    setFile([]);
+    return object.file;
     // console.log("size",formatFileSize(file.size));
   }
 
@@ -137,11 +157,15 @@ function ChatForm() {
           <div className='w-20'>
             <FiPaperclip className='w-7 h-7 ml-2 cursor-pointer' onClick={handleClick} />
               <input type='file' id='fileInput' onChange={fileChangeHandle}
+               multiple
                className='hidden'/>
           </div>
-          {file?.name &&
-            <p className='absolute top-1 left-[8%]'> file: {file?.name}</p>
-          }
+          <div className='absolute top-1 left-[8%] flex '>
+            {file.length > 0 && <>Files:</>}
+            {file?.map((fileName,index) =>(
+             <p key={index} className=''>&nbsp;{fileName?.name}</p>
+            ))}
+          </div>
           <input type="text" id="message" placeholder="hey"
           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-custom-pitch-dark  dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-black" 
           ref={inputRef}
