@@ -115,6 +115,7 @@ ioInstance.on('connection', async(socket) => {
         });
         // send_file
         socket.on("send_group_file", async(file) => {
+          console.log("yoooooooooo")
           const messageObject = await uploadHandler(file);
           await groupMessageHandler(socket, messageObject);
         });
