@@ -1,5 +1,5 @@
 import { atom } from 'jotai';
-import { randomHexColorCode } from '../common/colorGenerator';
+import { randomHexColorCode } from '@/common/colorGenerator';
 
 export const connectedUsersListStore = atom([]);
 

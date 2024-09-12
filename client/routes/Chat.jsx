@@ -1,10 +1,10 @@
 import React, { useEffect, useRef } from 'react'
 import { useAtomValue, useSetAtom } from 'jotai';
 // Components
-import ChatForm from 'src/components/forms/ChatFrom'
-import Sidebar from 'src/components/layouts/Sidebar';
-import Navbar from 'src/components/layouts/Navbar';
-import ChatRenderer from 'src/components/renderer/ChatRenderer';
+import ChatForm from '@/components/forms/ChatFrom'
+import Sidebar from '@/components/layouts/Sidebar';
+import Navbar from '@/components/layouts/Navbar';
+import ChatRenderer from '@/components/renderer/ChatRenderer';
 // Global states
 import { 
   connectedUsersListStore,
@@ -12,12 +12,12 @@ import {
   recieverStore,
   senderIdStore,
   userNameStore
-} from 'src/store/store';
+} from '@/store/store';
 // Utils
-import { initializeSocket } from 'src/utils/socket'
-import GroupChatRenderer from 'src/components/renderer/GroupChatRenderer';
+import { initializeSocket } from '@/utils/socket'
+import GroupChatRenderer from '@/components/renderer/GroupChatRenderer';
 // Common functions
-import { randomHexColorCode } from 'src/common/colorGenerator';
+import { randomHexColorCode } from '@/common/colorGenerator';
 
 function Chat() {
     const ref = useRef(true);

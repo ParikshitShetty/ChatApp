@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAtomValue } from 'jotai';
 // Global States
-import { GroupState } from '../../store/store';
+import { GroupState } from '@/store/store';
 
 function GroupListItem({ groupData, getOldGroupMessages }) {
     const group = useAtomValue(GroupState);

@@ -3,8 +3,8 @@ import { IoPaperPlane } from "react-icons/io5";
 import { useAtomValue, useSetAtom } from 'jotai';
 import { FiPaperclip } from "react-icons/fi";
 // Utils
-import { initializeSocket } from '../../utils/socket'
-import { base64Encoder } from 'src/utils/fileEncoder';
+import { initializeSocket } from '@/utils/socket'
+import { base64Encoder } from '@/utils/fileEncoder';
 // Global States 
 import { 
   chatArrayStore,
@@ -12,7 +12,7 @@ import {
   GroupState,
   recieverStore,
   senderIdStore, 
-  userNameStore} from '../../store/store';
+  userNameStore} from '@/store/store';
 
 function ChatForm() {
   const [message,setMessage] = useState('');

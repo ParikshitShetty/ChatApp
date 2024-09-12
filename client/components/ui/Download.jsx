@@ -1,7 +1,7 @@
 import React from 'react';
 import { MdDownloadForOffline } from "react-icons/md";
 // Common functions
-import { fileNameSplitter } from '../../common/fileSizeCalculator';
+import { fileNameSplitter } from '@/common/fileSizeCalculator';
 
 function Download({message}) {
     const downloadFile = async(file) => {

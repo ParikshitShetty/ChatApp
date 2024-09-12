@@ -2,14 +2,14 @@ import { ErrorBoundary } from "react-error-boundary";
 import { useAtomValue } from "jotai";
 import { Toaster } from 'react-hot-toast';
 // Routes
-import Chat from './routes/Chat';
+import Chat from '@/routes/Chat';
 // Utils
-import FallbackComponent from './components/ui/FallbackComponent';
+import FallbackComponent from '@/components/ui/FallbackComponent';
 // Global States
 import { 
-  loginStateStore } from "./store/store";
+  loginStateStore } from "@/store/store";
 // Components
-import LoginForm from "./components/forms/LoginForm";
+import LoginForm from "@/components/forms/LoginForm";
 
 
 function App() {

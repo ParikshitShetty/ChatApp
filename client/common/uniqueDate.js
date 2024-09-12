@@ -1,4 +1,4 @@
-import calendar from '../../public/calendar.json';
+import calendar from '@/public/calendar.json';
 
 export function uniqueDate(chatArray) {
     let array = [];

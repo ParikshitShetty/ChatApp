@@ -12,11 +12,11 @@ import {
     GroupState, 
     recieverStore, 
     senderIdStore,
-    userNameStore} from '../../store/store';
+    userNameStore} from '@/store/store';
 // Socket Io Singleton
-import { initializeSocket } from '../../utils/socket';
+import { initializeSocket } from '@/utils/socket';
 // Utils
-import UserListItem from '../reusable/UserListItem';
+import UserListItem from '@/components/reusable/UserListItem';
 import GroupListItem from '../reusable/GroupListItem';
 // API services
 import { postApiService } from '../../services/postApiService';

@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useRef, useState } from 'react'
 import { useAtom, useAtomValue } from 'jotai';
 // Utils
-import { initializeSocket } from '../../utils/socket';
+import { initializeSocket } from '@/utils/socket';
 // Compoentns
 import Loader from '../ui/Loader';
 import Download from '../ui/Download';

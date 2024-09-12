@@ -10,13 +10,14 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      "src": "/src",
-			"components": "/components",
-			"routes": "/routes",
-			"store": "/store",
-			"services": "/services",
-			"utils": "/utils",
-			"common": "/common",
+      "@/src": "/src",
+			"@/components": "/components",
+			"@/routes": "/routes",
+			"@/store": "/store",
+			"@/services": "/services",
+			"@/utils": "/utils",
+			"@/common": "/common",
+      "@/public":"/public",
     }
   }
 })
