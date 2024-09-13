@@ -1,10 +1,12 @@
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import { LuLogOut } from "react-icons/lu";
+import { HiMiniVideoCamera, HiMiniVideoCameraSlash } from "react-icons/hi2";
 // Global States
 import { 
   GroupChatModeState,
     GroupState,
+    initiateVedioCallState,
     loginStateStore,
     recieverStore,
     userNameStore} from '@/store/store';
@@ -19,6 +21,20 @@ function Navbar() {
     const group = useAtomValue(GroupState);
 
     const setLoginState = useSetAtom(loginStateStore);
+
+    const [initiateVedioCall,setInitiateVedioCall] = useAtom(initiateVedioCallState);
+
+    const startVedioCall = () => {
+      if(!initiateVedioCall) setInitiateVedioCall(true);
+    };
+
+    const endVedioCall = () => {
+      if(initiateVedioCall) setInitiateVedioCall(false);
+    };
+
+    useEffect(() => {
+        endVedioCall();
+    },[reciever])
 
     // const logOut = () => {
     //   setLoginState(false);
@@ -55,8 +71,22 @@ function Navbar() {
                     }
                   </div>
                 }
-                
+
               <div className="flex justify-center items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
+                <div className="text-white font-medium rounded-lg text-sm px-8 py-2 text-center">
+                  {
+                    reciever.userName && (
+                      initiateVedioCall 
+                      ?
+                        <HiMiniVideoCameraSlash className='w-6 h-6 cursor-pointer fill-red-600'
+                          onClick={endVedioCall}
+                        />
+                      :
+                        <HiMiniVideoCamera className='w-6 h-6 cursor-pointer' 
+                          onClick={startVedioCall}
+                        />
+                  )}
+                </div>
                 <div
                   className="text-white bg-blue-700 font-medium rounded-lg text-sm px-8 py-2 text-center dark:bg-blue-600 first-letter:uppercase"
                 >

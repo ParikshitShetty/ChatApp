@@ -9,6 +9,7 @@ import ChatRenderer from '@/components/renderer/ChatRenderer';
 import { 
   connectedUsersListStore,
   GroupChatModeState,
+  initiateVedioCallState,
   recieverStore,
   senderIdStore,
   userNameStore
@@ -18,6 +19,7 @@ import { initializeSocket } from '@/utils/socket'
 import GroupChatRenderer from '@/components/renderer/GroupChatRenderer';
 // Common functions
 import { randomHexColorCode } from '@/common/colorGenerator';
+import CustomWebCam from '@/components/webcam/CustomWebCam';
 
 function Chat() {
     const ref = useRef(true);
@@ -30,6 +32,8 @@ function Chat() {
     const reciever = useAtomValue(recieverStore);
 
     const groupChatMode = useAtomValue(GroupChatModeState);
+
+    const initiateVedioCall = useAtomValue(initiateVedioCallState);
     
     useEffect(()=>{
       const socket = initializeSocket(userName);
@@ -78,6 +82,9 @@ function Chat() {
               <>
                 <ChatRenderer />
                 <ChatForm />
+                { initiateVedioCall && (
+                  <CustomWebCam />
+                )}
               </>
               :
               <>

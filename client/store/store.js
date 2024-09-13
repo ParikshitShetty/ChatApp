@@ -32,3 +32,6 @@ export const GroupDataState = atom([
 // For chat loader
 export const chatLoaderState = atom(false);
 export const groupChatLoaderState = atom(false);
+
+// For Vedio Call
+export const initiateVedioCallState = atom(false)
