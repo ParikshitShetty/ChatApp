@@ -35,3 +35,8 @@ export const groupChatLoaderState = atom(false);
 
 // For Vedio Call
 export const initiateVedioCallState = atom(false)
+
+// For Chatting
+export const messageState = atom('');
+
+export const attachMentToggleState = atom(false);

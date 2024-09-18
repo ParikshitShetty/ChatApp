@@ -73,7 +73,7 @@ function Navbar() {
                 }
 
               <div className="flex justify-center items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
-                <div className="text-white font-medium rounded-lg text-sm px-8 py-2 text-center">
+                {/* <div className="text-white font-medium rounded-lg text-sm px-8 py-2 text-center">
                   {
                     reciever.userName && (
                       initiateVedioCall 
@@ -86,7 +86,7 @@ function Navbar() {
                           onClick={startVedioCall}
                         />
                   )}
-                </div>
+                </div> */}
                 <div
                   className="text-white bg-blue-700 font-medium rounded-lg text-sm px-8 py-2 text-center dark:bg-blue-600 first-letter:uppercase"
                 >

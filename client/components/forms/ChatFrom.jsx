@@ -1,21 +1,27 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useState } from 'react'
 import { IoPaperPlane } from "react-icons/io5";
-import { useAtomValue, useSetAtom } from 'jotai';
-import { FiPaperclip } from "react-icons/fi";
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 // Utils
 import { initializeSocket } from '@/utils/socket'
 import { base64Encoder } from '@/utils/fileEncoder';
 // Global States 
 import { 
+  attachMentToggleState,
   chatArrayStore,
   GroupChatModeState,
   GroupState,
+  messageState,
   recieverStore,
   senderIdStore, 
   userNameStore} from '@/store/store';
+// Components 
+import PaperclipPopup from '../ui/PaperclipPopup';
+import ChatFormInput from '../reusable/ChatFormInput';
+import PaperClip from '../reusable/PaperClip';
+import ChatFormFileRenderer from '../renderer/ChatFormFileRenderer';
 
 function ChatForm() {
-  const [message,setMessage] = useState('');
+  const [message,setMessage] = useAtom(messageState);
 
   const sender = useAtomValue(senderIdStore);
 
@@ -31,10 +37,7 @@ function ChatForm() {
 
   const [file, setFile] = useState([]);
 
-  const inputRef = useRef(null);
-  const fileInputRef = useRef(null);
-  // Input change handler
-  const changeHandler = (event) => setMessage(event.target.value);
+  const [attachmentToggle, setAttachmentToggle] = useAtom(attachMentToggleState);
 
   const formSubmit = async(event) => {
     event.preventDefault();
@@ -125,6 +128,7 @@ function ChatForm() {
       return { fileBuf:file, name:file.name, type:file.type }
     })
     setFile(fileArray);
+    setAttachmentToggle(false);
   }
 
   const handleClick = () => {
@@ -144,46 +148,23 @@ function ChatForm() {
     // console.log("size",formatFileSize(file.size));
   }
 
-  useEffect(()=>{
-    if (inputRef) {
-      inputRef.current.focus()
-    }
-  },[reciever])
-
   return (
     <>
       <div className='w-[70%] h-[13vh] flex justify-end items-end relative'>
-        <form className='w-full h-full flex justify-center items-end mb-4' onSubmit={groupChatMode ? groupFormSubmit : formSubmit}>
-          <div className='w-20'>
-            <FiPaperclip className='w-7 h-7 ml-2 cursor-pointer' onClick={handleClick} />
-              <input type='file' id='fileInput' onChange={fileChangeHandle}
-               multiple
-               className='hidden'/>
-          </div>
-          <div className='absolute top-1 left-[8%] flex '>
-            {file.length > 0 && <>Files:</>}
-            {file?.map((fileName,index) =>(
-             <p key={index} className=''>&nbsp;{fileName?.name}</p>
-            ))}
-          </div>
-          <input type="text" id="message" placeholder="hey"
-          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-custom-pitch-dark  dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-black" 
-          ref={inputRef}
-          value={message} onChange={changeHandler} onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              e.preventDefault();
-              if(groupChatMode) {
-                groupFormSubmit(e);
-                return
-              }
-              formSubmit(e)
-            }
-          }}/>
+        <form className='w-full h-full flex justify-center items-end mb-4 relative' 
+          onSubmit={groupChatMode ? groupFormSubmit : formSubmit}
+        >
+          <ChatFormFileRenderer file={file} />
+          <ChatFormInput formSubmit={formSubmit} groupFormSubmit={groupFormSubmit} />
+          <PaperClip fileChangeHandle={fileChangeHandle} />
 
           <button type="submit" className='w-10 h-10 mx-4'>
             <IoPaperPlane className='w-full h-full'/>
           </button>
         </form>
+        { attachmentToggle && (
+          <PaperclipPopup />
+        )}
       </div>
     </>
   )
