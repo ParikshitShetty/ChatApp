@@ -2,9 +2,10 @@ import { useAtom, useAtomValue } from 'jotai';
 import React, { useEffect, useRef } from 'react';
 // Global States
 import { 
-    GroupChatModeState, 
-    messageState, 
-    recieverStore } from '@/store/store';
+  fileSizeStore,
+  GroupChatModeState, 
+  messageState, 
+  recieverStore, } from '@/store/store';
 
 function ChatFormInput({formSubmit, groupFormSubmit}) {
     const inputRef = useRef(null);
@@ -13,6 +14,7 @@ function ChatFormInput({formSubmit, groupFormSubmit}) {
     const [message,setMessage] = useAtom(messageState);
     const groupChatMode = useAtomValue(GroupChatModeState);
 
+    const fileSize = useAtomValue(fileSizeStore);
 
     const changeHandler = (event) => setMessage(event.target.value);
 
@@ -30,6 +32,7 @@ function ChatFormInput({formSubmit, groupFormSubmit}) {
           pr-10" 
           ref={inputRef}
           value={message} onChange={changeHandler} onKeyDown={(e) => {
+            if (fileSize) return;
             if (e.key === 'Enter') {
               e.preventDefault();
               if(groupChatMode) {

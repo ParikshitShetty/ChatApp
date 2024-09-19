@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import 'react-responsive-modal/styles.css';
-import { Modal } from 'react-responsive-modal';
+// Components
+import ImagePopup from '../ui/ImagePopup';
 
 function FileRenderer({message, index}) {
-    const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false);
 
-    const onOpenModal = () => setOpen(true);
-    const onCloseModal = () => setOpen(false);
+  const onOpenModal = () => setOpen(true);
+  const onCloseModal = () => setOpen(false);
 
   return (
     <>
@@ -15,14 +15,12 @@ function FileRenderer({message, index}) {
             className='h-auto w-full cursor-pointer'
             onClick={onOpenModal}
         />
-            
-        <Modal open={open} onClose={onCloseModal} center>
-            <img alt={`Image Popup ${index}`}
-            src={`data:image/png;base64,${message.image}`}  
-            className='h-full w-full cursor-pointer'
-            onClick={onOpenModal}
-            />
-        </Modal>
+        <ImagePopup
+          image={`data:image/png;base64,${message.image}`}
+          index={index}
+          onCloseModal={onCloseModal}
+          open={open}
+        />
     </>
   )
 }

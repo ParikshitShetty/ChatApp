@@ -8,6 +8,7 @@ import { base64Encoder } from '@/utils/fileEncoder';
 import { 
   attachMentToggleState,
   chatArrayStore,
+  fileSizeStore,
   GroupChatModeState,
   GroupState,
   messageState,
@@ -33,6 +34,8 @@ function ChatForm() {
   const setChatArray = useSetAtom(chatArrayStore);
 
   const groupChatMode = useAtomValue(GroupChatModeState);
+
+  const fileSize = useAtomValue(fileSizeStore);
 
   const group = useAtomValue(GroupState);
 
@@ -145,8 +148,8 @@ function ChatForm() {
           <ChatFormInput formSubmit={formSubmit} groupFormSubmit={groupFormSubmit} />
           <PaperClip/>
 
-          <button type="submit" className='w-10 h-10 mx-4'>
-            <IoPaperPlane className='w-full h-full'/>
+          <button type="submit" className='w-10 h-10 mx-4' disabled={fileSize}>
+            <IoPaperPlane className={`w-full h-full transition-all duration-300 ease-in-out ${fileSize && `opacity-70`}`}/>
           </button>
         </form>
         { attachmentToggle && (
