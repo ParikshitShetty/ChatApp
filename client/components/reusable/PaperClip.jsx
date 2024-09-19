@@ -1,15 +1,28 @@
 import React from 'react';
-import { useAtom } from 'jotai';
+import { useAtom, useSetAtom } from 'jotai';
 import { FiPaperclip } from 'react-icons/fi';
 // Global States
-import { attachMentToggleState } from '@/store/store';
+import { 
+  attachMentToggleState, 
+  uploadFilesStore, } from '@/store/store';
 
-function PaperClip({ fileChangeHandle }) {
+function PaperClip() {
     const [attachmentToggle, setAttachmentToggle] = useAtom(attachMentToggleState);
-    
+
+    const setFile = useSetAtom(uploadFilesStore);
+
     const toogleHandler = () => {
-        setAttachmentToggle(prev => !prev);
+      setAttachmentToggle(prev => !prev);
     };
+
+    const fileChangeHandle = (event) => {
+      const InputFiles = Array.from(event.target.files);
+      const fileArray = InputFiles.map( file => {
+        return { fileBuf:file, name:file.name, type:file.type }
+      })
+      setFile(fileArray);
+      setAttachmentToggle(false);
+    }
   return (
     <>
       <div className='w-12 absolute right-28 top-16 shadow-lg'>

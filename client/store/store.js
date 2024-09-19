@@ -40,3 +40,5 @@ export const initiateVedioCallState = atom(false)
 export const messageState = atom('');
 
 export const attachMentToggleState = atom(false);
+
+export const uploadFilesStore = atom([]);

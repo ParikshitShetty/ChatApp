@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { IoPaperPlane } from "react-icons/io5";
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 // Utils
@@ -13,6 +13,7 @@ import {
   messageState,
   recieverStore,
   senderIdStore, 
+  uploadFilesStore, 
   userNameStore} from '@/store/store';
 // Components 
 import PaperclipPopup from '../ui/PaperclipPopup';
@@ -35,9 +36,9 @@ function ChatForm() {
 
   const group = useAtomValue(GroupState);
 
-  const [file, setFile] = useState([]);
+  const [file, setFile] = useAtom(uploadFilesStore);
 
-  const [attachmentToggle, setAttachmentToggle] = useAtom(attachMentToggleState);
+  const attachmentToggle = useAtomValue(attachMentToggleState);
 
   const formSubmit = async(event) => {
     event.preventDefault();
@@ -122,20 +123,6 @@ function ChatForm() {
     }
   }
 
-  const fileChangeHandle = (event) => {
-    const InputFiles = Array.from(event.target.files);
-    const fileArray = InputFiles.map( file => {
-      return { fileBuf:file, name:file.name, type:file.type }
-    })
-    setFile(fileArray);
-    setAttachmentToggle(false);
-  }
-
-  const handleClick = () => {
-    const fileInput = document.getElementById("fileInput");
-    if (fileInput) fileInput.click();
-  }
-
   const uploadFile = (messgeObj) => {
     if(file.length === 0) return console.log('file is empty');
     const socket = initializeSocket(userName);
@@ -154,9 +141,9 @@ function ChatForm() {
         <form className='w-full h-full flex justify-center items-end mb-4 relative' 
           onSubmit={groupChatMode ? groupFormSubmit : formSubmit}
         >
-          <ChatFormFileRenderer file={file} />
+          <ChatFormFileRenderer/>
           <ChatFormInput formSubmit={formSubmit} groupFormSubmit={groupFormSubmit} />
-          <PaperClip fileChangeHandle={fileChangeHandle} />
+          <PaperClip/>
 
           <button type="submit" className='w-10 h-10 mx-4'>
             <IoPaperPlane className='w-full h-full'/>
