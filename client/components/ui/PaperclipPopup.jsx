@@ -1,16 +1,23 @@
 import React from 'react';
-import { useAtom } from 'jotai';
+import { useAtom, useSetAtom } from 'jotai';
 // Icons
 import { IoDocumentOutline } from 'react-icons/io5';
 import { MdOutlineCameraAlt } from 'react-icons/md';
 // Global States
-import { initiateVedioCallState } from '@/store/store';
+import { 
+  attachMentToggleState, 
+  initiateVedioCallState, } from '@/store/store';
 
 function PaperclipPopup() {
   const [initiateVedioCall,setInitiateVedioCall] = useAtom(initiateVedioCallState);
 
+  const setAttachmentToggle = useSetAtom(attachMentToggleState);
+
     const toggleWebCam = () => {
-      if(!initiateVedioCall) setInitiateVedioCall(true);
+      if(!initiateVedioCall){
+        setInitiateVedioCall(true);
+        setAttachmentToggle(false);
+      }
     }
 
     const handleClick = () => {

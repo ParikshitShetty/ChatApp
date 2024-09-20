@@ -56,7 +56,7 @@ function ChatFormFileRenderer() {
     let bytes = 0;
     file.map((f) => bytes += f.fileBuf.size);
     const total = formatFileSize(bytes,2);
-    if (total.length > 8) setFileSize(true);
+    if (total.length > 8 && total.includes('MB')) setFileSize(true);
     else setFileSize(false);
   }, [file]);
 

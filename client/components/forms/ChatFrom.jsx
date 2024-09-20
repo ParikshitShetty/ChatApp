@@ -137,7 +137,7 @@ function ChatForm() {
     return object.file;
     // console.log("size",formatFileSize(file.size));
   }
-
+console.log("file",file)
   return (
     <>
       <div className='w-[70%] h-[13vh] flex justify-end items-end relative'>
