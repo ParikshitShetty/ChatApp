@@ -8,6 +8,7 @@ import Download from '../ui/Download';
 import FileRenderer from './FileRenderer';
 // Global States
 import { 
+    autoScrollStore,
     chatArrayStore, 
     chatLoaderState, 
     recieverStore,
@@ -25,6 +26,8 @@ function ChatRenderer() {
     const userName = useAtomValue(userNameStore);
 
     const chatLoader = useAtomValue(chatLoaderState);
+
+    const [autoScroll,setAutoScroll] = useAtom(autoScrollStore);
 
     const [vedioDownloaded,setVedioDownloaded] = useState(false);
 
@@ -58,11 +61,12 @@ function ChatRenderer() {
       },[])
 
     useEffect(() =>{
-      if (messagesEndRef.current && chatArray.length) {
+      if (messagesEndRef.current && chatArray.length && autoScroll) {
         messagesEndRef.current.scrollTop =  messagesEndRef.current.scrollHeight;
       }
       const array = uniqueDate(chatArray);
       setDateArr(array);
+      if (!autoScroll) setAutoScroll(true);
     },[chatArray])
     // console.log("reciever",reciever)
     console.log("chatArray",chatArray)

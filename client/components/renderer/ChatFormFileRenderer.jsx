@@ -80,7 +80,7 @@ function ChatFormFileRenderer() {
             focus:scale-90 inline-flex justify-center items-center
             transition-all duration-300 ease-in-out'>
               Clear All
-              <MdOutlineClear className='w-6 h-6 cursor-pointer'/>
+              <MdOutlineClear className='size-6 cursor-pointer'/>
             </button>
 
             {file?.map((fileName,index) => 

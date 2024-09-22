@@ -44,3 +44,6 @@ export const attachMentToggleState = atom(false);
 export const uploadFilesStore = atom([]);
 
 export const fileSizeStore = atom(false);
+
+// For auto scrolling
+export const autoScrollStore = atom(true);

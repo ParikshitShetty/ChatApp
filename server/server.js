@@ -16,6 +16,7 @@ const { Server } = require("socket.io");
 const { readPerosnalMessages } = require('./controller/messageReaderController');
 const { readGroupMessages } = require('./controller/groupMessageReaderController');
 const { downloadFile } = require('./controller/downloadFile');
+const { getFile } = require('./controller/getFile');
 
 // Import SocketIo Handlers
 const disconnectHandler = require('./socketIoHandlers/disconnectHandler');
@@ -140,11 +141,13 @@ app.get('/', async(req, res) => {
   res.json({ GroupMessages:result ,userList:existingUser});
 });
 
+// Define API routes here
+app.post('/api/read_messages',readPerosnalMessages);
+app.post('/api/read_group_messages',readGroupMessages);
+app.post('/api/download',downloadFile);
+app.post('/api/get_image',getFile);
+
+// Start Server
 server.listen(port,'0.0.0.0', () => {
   console.log('server running at http://localhost:3000');
-
-  // Define API routes here
-  app.post('/api/read_messages',readPerosnalMessages);
-  app.post('/api/read_group_messages',readGroupMessages);
-  app.post("/api/download", downloadFile);
 });
