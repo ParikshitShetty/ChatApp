@@ -4,11 +4,10 @@ const { updateUser, readUsers } = require('../utils/usersCollectionHandler');
 const disconnectHandler = async(socket,ioInstance,userName,userObj) =>{
     try {
         socket.leave(userName);
-        console.log("Disconnected: ",userName);
+        console.log("Disconnected:",userName);
 
-        userObj = JSON.parse(userObj);
+        console.log("userObj",userObj)
         userObj.status = 'offline';
-        userObj = JSON.stringify(userObj);
 
         console.log("userObj disconnect",userObj)
         // Update the status in db

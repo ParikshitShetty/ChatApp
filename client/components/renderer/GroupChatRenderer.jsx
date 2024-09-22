@@ -9,6 +9,7 @@ import Loader from '../ui/Loader';
 import FileRenderer from './FileRenderer';
 // Global States
 import { 
+    autoScrollStore,
     groupchatArrayStore, 
     groupChatLoaderState, 
     recieverStore,
@@ -26,6 +27,8 @@ function GroupChatRenderer() {
     const userName = useAtomValue(userNameStore);
 
     const groupChatLoader = useAtomValue(groupChatLoaderState);
+
+    const [autoScroll,setAutoScroll] = useAtom(autoScrollStore);
 
     const ref = useRef(true);
 
@@ -69,11 +72,13 @@ function GroupChatRenderer() {
     },[]);
 
     useEffect(() =>{
-      if (messagesEndRef.current && chatArray.length) {
+      if (messagesEndRef.current && chatArray.length && autoScroll) {
         messagesEndRef.current.scrollTop =  messagesEndRef.current.scrollHeight;
       }
       const array = uniqueDate(chatArray);
       setDateArr(array);
+
+      if (!autoScroll) setAutoScroll(true);
     },[chatArray])
     console.log("chatArray",chatArray);
   return (

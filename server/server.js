@@ -62,13 +62,13 @@ ioInstance.on('connection', async(socket) => {
 
       console.log(`A user connected with id ${chatID} and userName ${userName}`);
       // Add the user to the array
-      let userObj = JSON.stringify({
+      let userObj = {
         chatID : chatID,
         userName : userName,
         status: 'online'
-      });
+      };
 
-      // console.log("username",userName);
+      // console.log("userObj",userObj);
 
       // To add unique users to the db
       await updateUser(userName, userObj);
@@ -78,9 +78,8 @@ ioInstance.on('connection', async(socket) => {
 
       socket.join(userName);
 
-      const parsedUser = JSON.parse(userObj)
       // Send the current users userId
-      socket.emit('current_user',parsedUser)
+      socket.emit('current_user',userObj)
       // Sending userslist to all the users connected
       ioInstance.emit('users_list',{ usersList:parsedObjects })
 
