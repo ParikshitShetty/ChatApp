@@ -6,7 +6,9 @@ const readGroupMessages = async(req, res) => {
     try {
       let messages = await readGroupMessage();
 
-      messages = [...messages].map( message => fileEncryptor({ message }) );
+      // Promise.all is used to handle multiple promises concurrently 
+      // It ensures all the promises are resolved before moving forward
+      messages = await Promise.all([...messages].map( message => fileEncryptor({ message })));
 
       res.json({ messages });
     } catch (error) {
