@@ -5,7 +5,7 @@ const getFile = async(req, res) => {
   try{
       const { file } = req.body;
       const filePath = path.join(__dirname, '..', file);
-      console.log("filePath",filePath)
+      // console.log("filePath",filePath)
 
       if(!fs.existsSync(filePath)) throw new Error("File doesn't exist");
 

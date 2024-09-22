@@ -12,13 +12,10 @@ const readUsers = async() => {
 
 const createUser = async(userData) => {
     try {
-        // console.log("createUser userData",userData)
-
-        const parsedObject = JSON.parse(userData);
         // Check the type of userData
-        if (typeof parsedObject !== 'object') throw new Error("Input data must be an object");
+        if (typeof userData !== 'object') throw new Error("Input data must be an object");
 
-        const details = new userModel(parsedObject)
+        const details = new userModel(userData)
         // console.log("details",details);
         const createdUser = await details.save();
         // console.log("createdUser",createdUser)

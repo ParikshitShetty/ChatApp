@@ -59,7 +59,7 @@ function FileRenderer({message, index}) {
             onClick={onOpenModal}
         />
         {
-          !loaded && (
+          !loaded && !message?.load && (
           <>
             <div className={`w-full h-full absolute top-0 left-0 grid place-content-center 
             bg-transparent backdrop-blur-md`}>
