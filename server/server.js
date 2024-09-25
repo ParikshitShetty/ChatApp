@@ -3,6 +3,9 @@ const app = express()
 const cors = require('cors')
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const passport = require('passport');
+const session = require('express-session');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
 // Config env file
 require('dotenv').config();
 
@@ -45,6 +48,38 @@ app.use(cors({
 // Use body-parser middleware to parse JSON and URL-encoded data
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+
+// Passport configuration
+passport.use(new GoogleStrategy({
+  clientID: process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  callbackURL: process.env.GOOGLE_CALLBACK_URL,
+},
+function(accessToken, refreshToken, profile, done) {
+  // Here you would find or create a user in your database
+  return done(null, profile);
+}
+));
+
+// Serialize user (for session support, can be adjusted)
+passport.serializeUser(function(user, done) {
+  done(null, user);
+});
+
+passport.deserializeUser(function(user, done) {
+  done(null, user);
+});
+
+// Middleware to handle sessions
+app.use(session({
+  secret: 'your_secret_key', // You should replace this with a secure key in production
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false } // Set to true if using HTTPS (secure cookies)
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Create an instance of the socketio
 const ioInstance = new Server(server, {
@@ -145,6 +180,35 @@ app.post('/api/read_messages',readPerosnalMessages);
 app.post('/api/read_group_messages',readGroupMessages);
 app.post('/api/download',downloadFile);
 app.post('/api/get_image',getFile);
+
+// Route to start the authentication process
+app.get('/auth/google', passport.authenticate('google', {
+  scope: ['profile', 'email']
+}));
+
+// Google OAuth callback URL
+app.get('/google/callback', 
+  passport.authenticate('google', { failureRedirect: '/' }),
+  function(req, res) {
+    // Successful authentication, redirect to the frontend or dashboard
+    res.redirect('http://localhost:5173/');
+  }
+);
+
+// Route to check if the user is authenticated
+app.get('/profile', (req, res) => {
+  if (!req.isAuthenticated()) {
+    return res.redirect('/auth/google');
+  }
+  res.json(req.user); // Display the user profile information
+});
+
+// Logout route
+app.get('/logout', (req, res) => {
+  req.logout(() => {
+    res.redirect('/');
+  });
+});
 
 // Start Server
 server.listen(port,'0.0.0.0', () => {
