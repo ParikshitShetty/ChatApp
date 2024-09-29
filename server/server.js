@@ -20,6 +20,11 @@ const { readPerosnalMessages } = require('./controller/messageReaderController')
 const { readGroupMessages } = require('./controller/groupMessageReaderController');
 const { downloadFile } = require('./controller/downloadFile');
 const { getFile } = require('./controller/getFile');
+// Import Auth Controller
+const { 
+  logOutController, 
+  sessionChecker, 
+  googleCallbackChecker } = require('./controller/authController');
 
 // Import SocketIo Handlers
 const disconnectHandler = require('./socketIoHandlers/disconnectHandler');
@@ -191,42 +196,13 @@ app.get('/auth/google', passport.authenticate('google', {
 }));
 
 // Google OAuth callback URL
-app.get('/google/callback', 
-  passport.authenticate('google', { failureRedirect: '/' }),
-  function(req, res) {
-    const userName = req.user.displayName || req.user.name || 'User';
-
-    const cookieOptions = {
-      domain: 'localhost',
-      maxAge: 24 * 60 * 60 * 1000,
-      httpOnly: false, //  use true if you don't want F.E to read it
-      sameSite: 'Lax', // use None for production 
-      path:'/'
-    }
-    // Successful authentication, redirect to the frontend or dashboard
-    res.cookie('user',userName,cookieOptions).
-    redirect(`http://localhost:5173/`);
-  }
+app.get('/google/callback', passport.authenticate('google', { failureRedirect: '/' }),
+  googleCallbackChecker
 );
-
 // Route to check if the user is authenticated
-app.get('/auth/profile', (req, res) => {
-  console.log("auth",req.isAuthenticated())
-  if (!req.isAuthenticated()) return res.json({message:"User is not authenticated",redirect:true, url:'/auth/google'});
-
-  res.json({ message:"User is authenticated", redirect:false, user:req.user}); // Display the user profile information
-});
-
+app.get('/auth/check-session',sessionChecker);
 // Logout route
-app.get('/auth/logout', (req, res) => {
-  req.logout((err) => {
-    if (err) return next(err);
-    req.session.destroy(()=>{
-      res.clearCookie('connect.sid'); // Clear the session cookie
-      res.redirect('http://localhost:5173/login');
-    })
-  });
-});
+app.get('/auth/logout',logOutController);
 
 // Start Server
 server.listen(port,'0.0.0.0', () => {
