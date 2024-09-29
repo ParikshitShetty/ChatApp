@@ -7,7 +7,6 @@ import {
   GroupChatModeState,
     GroupState,
     initiateVedioCallState,
-    loginStateStore,
     recieverStore,
     userNameStore} from '@/store/store';
 
@@ -19,8 +18,6 @@ function Navbar() {
     const groupChatMode = useAtomValue(GroupChatModeState);
 
     const group = useAtomValue(GroupState);
-
-    const setLoginState = useSetAtom(loginStateStore);
 
     const [initiateVedioCall,setInitiateVedioCall] = useAtom(initiateVedioCallState);
 

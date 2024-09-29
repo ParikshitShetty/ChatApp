@@ -44,6 +44,7 @@ app.use(cors({
     'http://172.23.240.1:5173/'
     ],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true,
 }));
 // Use body-parser middleware to parse JSON and URL-encoded data
 app.use(bodyParser.json());
@@ -72,7 +73,7 @@ passport.deserializeUser(function(user, done) {
 
 // Middleware to handle sessions
 app.use(session({
-  secret: 'your_secret_key', // You should replace this with a secure key in production
+  secret: process.env.SECRET_KEY,
   resave: false,
   saveUninitialized: true,
   cookie: { secure: false } // Set to true if using HTTPS (secure cookies)
@@ -94,6 +95,9 @@ ioInstance.on('connection', async(socket) => {
   try {
       const chatID = socket.id;
       const userName = socket.handshake.query.userName;
+
+      console.log("userName",userName)
+      if (userName === '') return console.log("UserName is empty");
 
       console.log(`A user connected with id ${chatID} and userName ${userName}`);
       // Add the user to the array
@@ -190,23 +194,37 @@ app.get('/auth/google', passport.authenticate('google', {
 app.get('/google/callback', 
   passport.authenticate('google', { failureRedirect: '/' }),
   function(req, res) {
+    const userName = req.user.displayName || req.user.name || 'User';
+
+    const cookieOptions = {
+      domain: 'localhost',
+      maxAge: 24 * 60 * 60 * 1000,
+      httpOnly: false, //  use true if you don't want F.E to read it
+      sameSite: 'Lax', // use None for production 
+      path:'/'
+    }
     // Successful authentication, redirect to the frontend or dashboard
-    res.redirect('http://localhost:5173/');
+    res.cookie('user',userName,cookieOptions).
+    redirect(`http://localhost:5173/`);
   }
 );
 
 // Route to check if the user is authenticated
-app.get('/profile', (req, res) => {
-  if (!req.isAuthenticated()) {
-    return res.redirect('/auth/google');
-  }
-  res.json(req.user); // Display the user profile information
+app.get('/auth/profile', (req, res) => {
+  console.log("auth",req.isAuthenticated())
+  if (!req.isAuthenticated()) return res.json({message:"User is not authenticated",redirect:true, url:'/auth/google'});
+
+  res.json({ message:"User is authenticated", redirect:false, user:req.user}); // Display the user profile information
 });
 
 // Logout route
-app.get('/logout', (req, res) => {
-  req.logout(() => {
-    res.redirect('/');
+app.get('/auth/logout', (req, res) => {
+  req.logout((err) => {
+    if (err) return next(err);
+    req.session.destroy(()=>{
+      res.clearCookie('connect.sid'); // Clear the session cookie
+      res.redirect('http://localhost:5173/login');
+    })
   });
 });
 

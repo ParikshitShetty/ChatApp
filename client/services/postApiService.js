@@ -4,7 +4,7 @@ async function postApiService(url,Obj) {
             method: "POST", 
             mode: "cors", 
             cache: "no-cache", 
-            credentials: "same-origin", //include is used to set cookies
+            credentials: "include", //include is used to set cookies
             headers: {
               "Content-Type": "application/json",
             },

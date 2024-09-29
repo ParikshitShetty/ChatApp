@@ -1,4 +1,5 @@
 import { atom } from 'jotai';
+import { atomWithStorage } from 'jotai/utils';
 import { randomHexColorCode } from '@/common/colorGenerator';
 
 export const connectedUsersListStore = atom([]);
@@ -9,9 +10,7 @@ export const recieverStore = atom({});
 export const chatArrayStore = atom([]);
 export const groupchatArrayStore = atom([]);
 
-export const userNameStore = atom('');
-
-export const loginStateStore = atom(false);
+export const userNameStore = atomWithStorage('user','');
 
 // Chat Mode
 export const GroupChatModeState = atom(false);

@@ -4,7 +4,7 @@ const { fileEncryptor } = require('../utils/fileEncryptor');
 const readPerosnalMessages = async(req, res) => {
     const { reciever, sender } = req.body;
     try {
-      // console.log("reciever",reciever,'sender',sender)
+      console.log("cookies",req.cookies)
       const messages = await readMessage();
 
       const filteredMessages =  messages.filter(message => (

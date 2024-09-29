@@ -81,8 +81,8 @@ function Sidebar() {
             // Make post request
             const responseJson = await postApiService(url, Obj);
 
-            // console.log("responseJson",responseJson);
-            setChatArray(responseJson.filteredMessages);
+            console.log("responseJson",responseJson);
+            if (responseJson?.filteredMessages) setChatArray(responseJson.filteredMessages);
         } catch (error) {
             console.error("Error while getting older messages : ",error)
         }finally{
@@ -110,7 +110,7 @@ function Sidebar() {
                 method: "POST", // *GET, POST, PUT, DELETE, etc.
                 mode: "cors", // no-cors, *cors, same-origin
                 cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
-                credentials: "same-origin", //include is used to set cookies
+                credentials: "include", //include is used to set cookies
                 headers: {
                   "Content-Type": "application/json",
                 },
@@ -122,7 +122,7 @@ function Sidebar() {
             const responseJson = await response.json();
 
             // console.log("responseJson",responseJson.messages);
-            setGroupChatArray(responseJson.messages);
+            if (responseJson?.messages) setGroupChatArray(responseJson.messages);
         } catch (error) {
             console.error("Error while getting older messages : ",error)
         }finally{
@@ -139,6 +139,7 @@ function Sidebar() {
     },[connectedUsersList])
 
     useEffect(() => {
+        if (!userName) return;
         const socket = initializeSocket(userName);
         if (groupChatMode) {
             const messageObj = {
