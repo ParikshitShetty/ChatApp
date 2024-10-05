@@ -1,6 +1,5 @@
 import React, { useEffect, useRef } from 'react'
-import { useAtom, useAtomValue, useSetAtom } from 'jotai';
-import { useLocation, useNavigate } from 'react-router-dom'; 
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'; 
 import Cookies from 'js-cookie';
 // Components
 import ChatForm from '@/components/forms/ChatFrom'
@@ -40,32 +39,6 @@ function Chat() {
     const groupChatMode = useAtomValue(GroupChatModeState);
 
     const initiateVedioCall = useAtomValue(initiateVedioCallState);
-    
-    const validateUser = async() => {
-      try {
-        const options = {
-          method: "GET", // *GET, POST, PUT, DELETE, etc.
-          mode: "cors", // no-cors, *cors, same-origin
-          cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
-          credentials: "include", //include is used to set cookies
-          headers: {
-            "Content-Type": "application/json",
-          },
-          redirect: "follow",
-          referrerPolicy: "no-referrer", 
-          body: JSON.stringify(Obj)
-      };
-        const resp = await fetch("http://localhost:3000/auth/profile",options);
-        const json = await resp.json();
-        console.log("respJson",json)
-        if(json.redirect) {
-          window.location.assign(`http://localhost:3000`);
-        }
-        // {message:"User is not authenticated",redirect:true, url:'/auth/google'}
-      } catch (error) {
-        console.error("Error while checking profile:",error)
-      }
-    }
 
     useEffect(()=>{
       const cookie = getCookie();

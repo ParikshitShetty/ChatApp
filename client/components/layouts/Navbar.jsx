@@ -2,6 +2,7 @@ import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import React, { useEffect, useRef } from 'react'
 import { LuLogOut } from "react-icons/lu";
 import { HiMiniVideoCamera, HiMiniVideoCameraSlash } from "react-icons/hi2";
+import { useNavigate } from 'react-router-dom';
 // Global States
 import { 
   GroupChatModeState,
@@ -21,6 +22,8 @@ function Navbar() {
 
     const [initiateVedioCall,setInitiateVedioCall] = useAtom(initiateVedioCallState);
 
+    const navigate = useNavigate();
+
     const startVedioCall = () => {
       if(!initiateVedioCall) setInitiateVedioCall(true);
     };
@@ -33,10 +36,9 @@ function Navbar() {
         endVedioCall();
     },[reciever])
 
-    // const logOut = () => {
-    //   setLoginState(false);
-    //   setUserName('');
-    // }
+    const logOut = () => {
+      navigate('/logout');
+    }
 
     // console.log("reciever",reciever)
 
@@ -89,9 +91,9 @@ function Navbar() {
                 >
                   {userName}
                 </div>
-                {/* <div className='pl-3'>
+                <div className='pl-3'>
                   <LuLogOut className='w-7 h-7 cursor-pointer' onClick={logOut}/>
-                </div> */}
+                </div>
               </div>
             </div>
         </nav>

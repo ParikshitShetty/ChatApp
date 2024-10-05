@@ -13,9 +13,13 @@ async function postApiService(url,Obj) {
             body: JSON.stringify(Obj)
         };
         const response = await fetch(url,options);
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
         const responseJson = await response.json();
         return responseJson;
     } catch (error) {
+        console.error('Fetch error:', error);
         return error;
     }
 }

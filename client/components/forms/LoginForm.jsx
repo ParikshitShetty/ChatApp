@@ -1,5 +1,6 @@
 import React from 'react';
 import { useAtom } from 'jotai';
+import { useNavigate } from 'react-router-dom';
 // Global States
 import { 
     userNameStore } from '@/store/store';

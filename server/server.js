@@ -3,6 +3,7 @@ const app = express()
 const cors = require('cors')
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const MongoStore = require('connect-mongo');
 const passport = require('passport');
 const session = require('express-session');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
@@ -23,8 +24,10 @@ const { getFile } = require('./controller/getFile');
 // Import Auth Controller
 const { 
   logOutController, 
-  sessionChecker, 
   googleCallbackChecker } = require('./controller/authController');
+// Import Middlewares
+const {
+  sessionChecker } = require('./middleware/authMiddleware');
 
 // Import SocketIo Handlers
 const disconnectHandler = require('./socketIoHandlers/disconnectHandler');
@@ -55,6 +58,26 @@ app.use(cors({
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
+// Middleware to handle sessions
+app.use(session({
+  secret: process.env.SECRET_KEY,
+  resave: false,
+  saveUninitialized: true,
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGO_DB_CONN_STRING,
+    collectionName: 'sessions'
+  }),
+  cookie: { 
+    secure: false,                   // Set to true if using HTTPS (secure cookies)
+    maxAge: 2 * 24 * 60 * 60 * 1000, // 1 week expiration
+    httpOnly: true,                  // Ensure the cookie is only used over HTTPS
+    sameSite: 'lax',                 // CSRF protection with relaxed cross-site restrictions
+  } 
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
 // Passport configuration
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
@@ -63,29 +86,21 @@ passport.use(new GoogleStrategy({
 },
 function(accessToken, refreshToken, profile, done) {
   // Here you would find or create a user in your database
+  console.log("User info callback:",profile,"accessToken",accessToken,"refreshToken",refreshToken);
   return done(null, profile);
 }
 ));
 
 // Serialize user (for session support, can be adjusted)
 passport.serializeUser(function(user, done) {
+  console.log("User info after serialized:",user);
   done(null, user);
 });
 
 passport.deserializeUser(function(user, done) {
+  console.log("User info after deserializeUser:",user);
   done(null, user);
 });
-
-// Middleware to handle sessions
-app.use(session({
-  secret: process.env.SECRET_KEY,
-  resave: false,
-  saveUninitialized: true,
-  cookie: { secure: false } // Set to true if using HTTPS (secure cookies)
-}));
-
-app.use(passport.initialize());
-app.use(passport.session());
 
 // Create an instance of the socketio
 const ioInstance = new Server(server, {
@@ -185,10 +200,10 @@ app.get('/', async(req, res) => {
 });
 
 // Define API routes here
-app.post('/api/read_messages',readPerosnalMessages);
-app.post('/api/read_group_messages',readGroupMessages);
-app.post('/api/download',downloadFile);
-app.post('/api/get_image',getFile);
+app.post('/api/read_messages',sessionChecker,readPerosnalMessages);
+app.post('/api/read_group_messages',sessionChecker,readGroupMessages);
+app.post('/api/download',sessionChecker,downloadFile);
+app.post('/api/get_image',sessionChecker,getFile);
 
 // Route to start the authentication process
 app.get('/auth/google', passport.authenticate('google', {
@@ -196,11 +211,11 @@ app.get('/auth/google', passport.authenticate('google', {
 }));
 
 // Google OAuth callback URL
-app.get('/google/callback', passport.authenticate('google', { failureRedirect: '/' }),
+app.get('/google/callback', passport.authenticate('google', { failureRedirect: 'http://localhost:5173/login' }),
   googleCallbackChecker
 );
 // Route to check if the user is authenticated
-app.get('/auth/check-session',sessionChecker);
+// app.get('/auth/check-session',sessionChecker);
 // Logout route
 app.get('/auth/logout',logOutController);
 

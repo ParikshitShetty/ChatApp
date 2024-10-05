@@ -1,5 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { useNavigate } from 'react-router-dom';
 // Global States
 import { 
     chatArrayStore,
@@ -43,6 +44,8 @@ function Sidebar() {
 
     const setChatLoader = useSetAtom(chatLoaderState);
     const setGroupChatLoader = useSetAtom(groupChatLoaderState);
+
+    const navigate = useNavigate();
     
     // console.log("recieverId",reciever);
 
@@ -119,9 +122,13 @@ function Sidebar() {
                 body: JSON.stringify(Obj)
             };
             const response = await fetch(url,options);
+            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+
             const responseJson = await response.json();
 
-            // console.log("responseJson",responseJson.messages);
+            if (responseJson.redirect) return navigate('/login');
+            
+            console.log("responseJson",responseJson);
             if (responseJson?.messages) setGroupChatArray(responseJson.messages);
         } catch (error) {
             console.error("Error while getting older messages : ",error)
